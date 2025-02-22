@@ -4,8 +4,26 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 24px;
+                overflow: hidden;
+            }
+            #root {
+                height: 100%;
+                border: 1px solid black;
+            }
+        </style>
     </head>
     <body>
+        <div id="root"></div>
         <script type="module" src="./main.ts"></script>
     </body>
 </html>
