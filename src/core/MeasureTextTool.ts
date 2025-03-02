@@ -3,13 +3,18 @@ interface MeasureTextToolParams {
     padding: number;
 }
 
+const initialOptions = {
+    font: '14px Arial',
+    padding: 10,
+};
+
 export class MeasureTextTool {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private widthPart: number;
 
-    constructor(options: MeasureTextToolParams) {
-        const { font = '14px Arial', padding = 10 } = options;
+    constructor(options: MeasureTextToolParams = initialOptions) {
+        const { font, padding } = options;
 
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
