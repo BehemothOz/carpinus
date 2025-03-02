@@ -1,13 +1,31 @@
 import { Scene, type SceneOptions } from './scene/Scene';
+import { Rectangle } from './scheme/shapes/Rectangle';
+import { SourceTreeNode } from './scheme/SourceTreeNode';
+
+interface CarpinusSceneOptions extends SceneOptions {
+    dataScheme: SourceTreeNode[];
+}
 
 export class CarpinusScene extends Scene {
-    constructor(options: SceneOptions) {
+    dataScheme: any;
+
+    constructor(options: CarpinusSceneOptions) {
         super(options);
+
+        this.dataScheme = options.dataScheme;
     }
 
     protected drawScene(): void {
-        this.ctx.beginPath();
-        this.ctx.rect(50, 50, 100, 75);
-        this.ctx.stroke();
+        for (const node of this.dataScheme) {
+            const rectangle = new Rectangle({
+                ctx: this.ctx,
+                x: node.position.x,
+                y: node.position.y,
+                width: node.size.width,
+                height: node.size.height,
+            });
+
+            rectangle.draw();
+        }
     }
 }
