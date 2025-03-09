@@ -1,12 +1,9 @@
 import { SourceTreeNodeBuilder } from './SourceTreeNodeBuilder';
-import { SourceTreeNode } from './SourceTreeNode';
+import { type SourceTreeNode } from './SourceTreeNode';
 import { MeasureTextTool } from '../MeasureTextTool';
+import { type State, type Scheme } from '../states';
 
 import { type SourceItem } from '../../__source';
-
-import { type Level, type LevelSize, type NodeLevelMeasure } from './Dimensions';
-
-import { type State } from '../scene/State';
 
 interface ExtendedSourceItem extends SourceItem {
     width: number;
@@ -21,26 +18,36 @@ interface CreatedTreeNodeParams {
     level: number;
 }
 
+interface SourceTreeParams {
+    state: State;
+    sourceData: SourceItem;
+}
+
 export class SourceTree {
     private measureTextTool: MeasureTextTool;
     private initialX: number = 0;
     private initialY: number = 0;
     private accumulatedOffset: number = 0;
-    private levelSizes: Map<Level, LevelSize> = new Map();
 
-    private state: State;
+    private scheme: Scheme;
 
     tree: SourceTreeNode;
+    sourceData: SourceItem;
 
-    constructor(state: State) {
+    w: number = 0;
+    h: number = 0;
+
+    constructor(params: SourceTreeParams) {
         this.measureTextTool = new MeasureTextTool();
-        this.state = state;
+
+        this.scheme = params.state.scheme;
+        this.sourceData = params.sourceData;
     }
 
-    public create(source: SourceItem): SourceTreeNode {
-        const extendedSource: ExtendedSourceItem = this.calculateNodeWidth(source);
+    public create(): SourceTreeNode {
+        const extendedSource: ExtendedSourceItem = this.calculateNodeWidth(this.sourceData);
 
-        this.tree = this.createTreeNodes({
+        const tree = this.createTreeNodes({
             node: extendedSource,
             x: this.initialX,
             y: this.initialY,
@@ -49,8 +56,9 @@ export class SourceTree {
         });
 
         this.accumulatedOffset = 0;
+        this.scheme.setTree(tree, { width: this.w, height: this.h });
 
-        return this.tree;
+        return tree;
     }
 
     private createTreeNodes(params: CreatedTreeNodeParams) {
@@ -65,12 +73,15 @@ export class SourceTree {
 
         this.accumulatedOffset += 1;
 
+        this.w = Math.max(this.w, params.x + width);
+        this.h = Math.max(this.h, params.y + this.scheme.heightNode);
+
         if (node.children.length > 0) {
             const width = this.calculateMaxWidthFromNodes(node.children);
 
             for (const child of node.children) {
-                const x = params.x + params.width + this.state.gap.x;
-                const y = (this.state.heightNode + this.state.gap.y) * this.accumulatedOffset;
+                const x = params.x + params.width + this.scheme.gap.x;
+                const y = (this.scheme.heightNode + this.scheme.gap.y) * this.accumulatedOffset;
 
                 const childOptions: CreatedTreeNodeParams = {
                     node: child,
@@ -85,63 +96,47 @@ export class SourceTree {
             }
         }
 
-        this.calculateLevelSize({
-            level: params.level,
-            width,
-            height: this.state.heightNode,
-        });
-
-        return nodeBuilder.setSize(width, this.state.heightNode).setChildren(children).build();
+        return nodeBuilder.setSize(width, this.scheme.heightNode).setChildren(children).build();
     }
 
-    private calculateLevelSize(nodeLevel: NodeLevelMeasure) {
-        const { level, width, height } = nodeLevel;
-        const levelSize = this.levelSizes.get(level);
+    // private changeTreeNodes(params: CreatedTreeNodeParams) {
+    //     const { scheme } = this.state;
+    //     const { node, width } = params;
 
-        let levelWidth = width;
-        let levelHeight = height;
+    //     const nodeBuilder = new SourceTreeNodeBuilder();
 
-        if (levelSize) {
-            levelWidth = Math.max(levelSize.width, width);
-            levelHeight = levelSize.height + height;
-        }
+    //     nodeBuilder.setText(node.name).setType(node.type);
+    //     nodeBuilder.setPosition(params.x, params.y);
 
-        this.levelSizes.set(level, { width: levelWidth, height: levelHeight });
-    }
+    //     const children: SourceTreeNode[] = [];
 
-    getTotalMeasure() {
-        const result = { width: 0, height: 0 };
+    //     this.accumulatedOffset += 1;
 
-        for (const levelSize of this.levelSizes.values()) {
-            result.width += levelSize.width;
-            result.height += levelSize.height;
-        }
+    //     this.w = Math.max(this.w, params.x + width);
+    //     this.h = Math.max(this.h, params.y + scheme.heightNode);
 
-        result.width += this.state.gap.x * this.levelSizes.size - 1;
-        result.height += this.state.gap.y * this.levelSizes.size - 1;
+    //     if (node.children.length > 0) {
+    //         const width = this.calculateMaxWidthFromNodes(node.children);
 
-        return result;
-    }
+    //         for (const child of node.children) {
+    //             const x = params.x + params.width + scheme.gap.x;
+    //             const y = (scheme.heightNode + scheme.gap.y) * this.accumulatedOffset;
 
-    public toArray(root: SourceTreeNode) {
-        const queue: SourceTreeNode[] = [root];
-        const result: SourceTreeNode[] = [];
+    //             const childOptions: CreatedTreeNodeParams = {
+    //                 node: child,
+    //                 x,
+    //                 y,
+    //                 width,
+    //                 level: params.level + 1,
+    //             };
 
-        while (queue.length > 0) {
-            if (queue.length === 0) {
-                break;
-            }
+    //             const childNode = this.createTreeNodes(childOptions);
+    //             children.push(childNode);
+    //         }
+    //     }
 
-            const currentNode = queue.shift() as SourceTreeNode;
-            result.push(currentNode);
-
-            if (currentNode.children.length > 0) {
-                queue.push(...currentNode.children);
-            }
-        }
-
-        return result;
-    }
+    //     return nodeBuilder.setSize(width, scheme.heightNode).setChildren(children).build();
+    // }
 
     private calculateNodeWidth(item: SourceItem): ExtendedSourceItem {
         const children: Array<ExtendedSourceItem> = [];
@@ -163,6 +158,6 @@ export class SourceTree {
     private calculateMaxWidthFromNodes(nodes: ExtendedSourceItem[]) {
         const widths = nodes.map((node) => node.width);
 
-        return Math.max(...widths, this.state.minWidthNode);
+        return Math.max(...widths, this.scheme.minWidthNode);
     }
 }

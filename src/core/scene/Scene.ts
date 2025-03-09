@@ -1,24 +1,26 @@
 import { CanvasManager } from './CanvasManager';
 import { CanvasEvents } from './CanvasEvents';
 
-import { type State as SceneState } from './State';
+import { type State } from '../states';
+import { SourceTreeNode } from '../scheme';
 
 export interface SceneOptions {
     container: HTMLElement;
-    state: SceneState;
+    state: State;
+    onSearchClick?: (mouseX: number, mouseY: number) => boolean;
 }
 
 export class Scene {
     protected canvas: HTMLCanvasElement;
     protected ctx: CanvasRenderingContext2D;
 
-    protected state: SceneState;
+    protected state: State;
 
     private canvasManager: CanvasManager;
     private events: CanvasEvents;
 
     constructor(protected options: SceneOptions) {
-        const { container, state } = options;
+        const { container, state, onSearchClick } = options;
 
         this.state = state;
         this.canvasManager = new CanvasManager({
@@ -27,7 +29,7 @@ export class Scene {
                 this.canvas.width = width;
                 this.canvas.height = height;
 
-                this.state.changeCanvasSize(width, height);
+                this.state.viewport.changeCanvasSize(width, height);
             },
         });
 
@@ -37,10 +39,13 @@ export class Scene {
         this.events = new CanvasEvents({
             canvas: this.canvas,
             state: this.state,
+            onSearchClick,
         });
 
-        this.state.onSceneUpdate((currentState) => {
-            const { offset, scale, canvasSize } = currentState;
+        this.state.onDraw((payload) => {
+            console.log('onDraw');
+            const { viewport, scheme } = payload;
+            const { offset, scale, canvasSize } = viewport;
 
             this.ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
@@ -48,16 +53,26 @@ export class Scene {
             this.ctx.translate(offset.x, offset.y);
             this.ctx.scale(scale, scale);
 
-            this.drawScene();
+            this.drawScene(scheme.tree);
             this.ctx.restore();
         });
     }
 
-    public destroy() {
-        this.canvasManager.destroyScene();
+    protected drawScene(tree: SourceTreeNode) {
+        throw new Error('Method drawScene must be implemented in child class');
     }
 
-    protected drawScene() {
-        throw new Error('Method drawScene must be implemented in child class');
+    public getSchemeSize() {
+        const { scheme } = this.state;
+
+        return scheme.getState().measure;
+    }
+
+    public getSceneSize() {
+        return this.canvasManager.getContainerSize();
+    }
+
+    public destroy() {
+        this.canvasManager.destroyScene();
     }
 }

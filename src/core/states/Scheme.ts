@@ -2,7 +2,12 @@ import { Gap, Position, SchemeMeasure } from '../scheme/Dimensions';
 import { SourceTreeNode } from '../scheme/SourceTreeNode';
 
 interface SchemeParams {
-    notify: (scheme: SourceTreeNode) => void;
+    notify: (scheme: SchemeNotifiedPayload) => void;
+}
+
+export interface SchemeNotifiedPayload {
+    tree: SourceTreeNode;
+    measure: SchemeMeasure;
 }
 
 export class Scheme {
@@ -25,11 +30,21 @@ export class Scheme {
 
     constructor(private params: SchemeParams) {}
 
-    setSourceTree(tree: SourceTreeNode, measure: SchemeMeasure) {
+    getState() {
+        return {
+            tree: this.tree,
+            measure: this.measure,
+        };
+    }
+
+    setTree(tree: SourceTreeNode, measure: SchemeMeasure) {
         this.tree = tree;
         this.measure = measure;
 
-        this.params.notify(this.tree);
+        this.params.notify({
+            tree: this.tree,
+            measure: this.measure,
+        });
     }
 
     collapseNodeChildren(mouseX: number, mouseY: number): boolean {

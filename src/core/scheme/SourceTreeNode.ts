@@ -31,4 +31,12 @@ export class SourceTreeNode {
 
         this.isCollapsed = false;
     }
+
+    get hasChildren() {
+        return this.children.length > 0;
+    }
+
+    collapse() {
+        this.isCollapsed = !this.isCollapsed;
+    }
 }

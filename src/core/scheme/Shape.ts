@@ -21,24 +21,6 @@ abstract class Shape {
     abstract draw(): void;
 }
 
-export class Circle extends Shape {
-    private radius: number;
-
-    constructor(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, fillColor: string) {
-        super(ctx, x, y, fillColor);
-        this.radius = radius;
-    }
-
-    draw(): void {
-        const { ctx } = this;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.fillColor;
-        ctx.fill();
-        ctx.closePath();
-    }
-}
-
 export interface RectangleParams extends ShapeParams {
     width: number;
     height: number;

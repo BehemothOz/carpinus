@@ -39,6 +39,14 @@ export class Viewport {
 
     constructor(private params: ViewportParams) {}
 
+    getState() {
+        return {
+            offset: this.offset,
+            scale: this.scale,
+            canvasSize: this.canvasSize,
+        };
+    }
+
     /**
      * Changes the scale of the scene.
      * @param {number} scale - The new scale value.
@@ -93,10 +101,6 @@ export class Viewport {
      */
     private emitTransformUpdate() {
         this.isUpdatePending = false;
-        this.params.notify({
-            offset: this.offset,
-            scale: this.scale,
-            canvasSize: this.canvasSize,
-        });
+        this.params.notify(this.getState());
     }
 }
