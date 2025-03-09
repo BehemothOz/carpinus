@@ -1,15 +1,14 @@
-import { Offset, Gap, Size, SchemeMeasure, Position } from '../scheme/Dimensions';
 import { EventEmitter } from '../EventEmitter';
-
-import { SourceTreeNode } from '../scheme/SourceTreeNode';
-
 import { Viewport, type ViewportNotifiedPayload } from './Viewport';
-import { Scheme } from './Scheme';
+import { Scheme, type SchemeNotifiedPayload } from './Scheme';
+
+export interface NotifyPayload {
+    viewport: ViewportNotifiedPayload;
+    scheme: SchemeNotifiedPayload;
+}
 
 interface ViewportStateEvents {
-    'viewport-transform': ViewportNotifiedPayload;
-    'scheme-update': SourceTreeNode;
-    'scheme-ready-drawing': SourceTreeNode;
+    draw: NotifyPayload;
 }
 
 export class State extends EventEmitter<ViewportStateEvents> {
@@ -19,41 +18,34 @@ export class State extends EventEmitter<ViewportStateEvents> {
     constructor() {
         super();
 
-        this.viewport = new Viewport({
-            notify: (payload) => {
-                this.emit('viewport-transform', payload);
+        const viewport = new Viewport({
+            notify: (viewportPayload: ViewportNotifiedPayload) => {
+                this.emit('draw', {
+                    viewport: viewportPayload,
+                    scheme: this.scheme.getState(),
+                });
             },
         });
 
-        this.scheme = new Scheme({
-            notify: (scheme: SourceTreeNode) => {
-                this.emit('scheme-ready-drawing', scheme);
+        const scheme = new Scheme({
+            notify: (schemePayload: SchemeNotifiedPayload) => {
+                this.emit('draw', {
+                    viewport: this.viewport.getState(),
+                    scheme: schemePayload,
+                });
             },
         });
+
+        this.viewport = viewport;
+        this.scheme = scheme;
     }
 
-    /**
-     * Registers a callback to be executed when the scene is updated.
-     * @param {(payload: ViewportNotifiedPayload) => void} cb - The callback function.
-     */
-    public onViewportTransform(cb: (payload: ViewportNotifiedPayload) => void) {
-        this.on('viewport-transform', (event) => {
+    public onDraw(cb: (payload: NotifyPayload) => void) {
+        this.on('draw', (event) => {
             cb(event.detail);
         });
     }
 
-    /*
-        ! FIX type
-    */
-    // public onSchemeReadyDrawing(cb: (payload: any) => void) {
-    //     this.on('scheme-ready-for-drawing', (event) => {
-    //         cb(event.detail);
-    //     });
-    // }
-
-    // schemeState.on('viewport-update', (payload) => {
-    //     schemeState.viewport.handleViewportUpdate(payload);
-    // });
     /*
         TODO: this.off('scene-update', cb);
     */
