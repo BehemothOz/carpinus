@@ -1,3 +1,5 @@
+import { Size } from '../scheme/Dimensions';
+
 interface CanvasManagerOptions {
     container: HTMLElement;
     onResize: (width: number, height: number) => void;
@@ -17,13 +19,9 @@ export class CanvasManager {
         this.onResize = options.onResize;
 
         this.resizeObserver = new ResizeObserver(() => {
-            const width = this.container.clientWidth;
-            const height = this.container.clientHeight;
+            const containerSize = this.getContainerSize();
 
-            // this.canvas.width = width;
-            // this.canvas.height = height;
-
-            this.onResize(width, height);
+            this.onResize(containerSize.width, containerSize.height);
         });
 
         this.resizeObserver.observe(this.container);
@@ -31,7 +29,7 @@ export class CanvasManager {
 
     private createCanvas(): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
-        canvas.style.background = '#e1ecfd';
+        canvas.style.background = '#ffffff';
 
         this.container.append(canvas);
         return canvas;
@@ -39,6 +37,13 @@ export class CanvasManager {
 
     public getScene(): HTMLCanvasElement {
         return this.canvas;
+    }
+
+    public getContainerSize(): Size {
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        return new Size(width, height);
     }
 
     public destroyScene() {
