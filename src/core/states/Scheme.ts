@@ -30,46 +30,44 @@ export class Scheme {
 
     constructor(private params: SchemeParams) {}
 
-    getState() {
+    public getState() {
         return {
             tree: this.tree,
             measure: this.measure,
         };
     }
 
-    setTree(tree: SourceTreeNode, measure: SchemeMeasure) {
+    public setState(tree: SourceTreeNode, measure: SchemeMeasure): void {
         this.tree = tree;
         this.measure = measure;
 
-        this.params.notify({
-            tree: this.tree,
-            measure: this.measure,
-        });
+        const currentState = this.getState();
+        this.params.notify(currentState);
     }
 
-    collapseNodeChildren(mouseX: number, mouseY: number): boolean {
-        const foundNode = this.findNodeByPosition(new Position(mouseX, mouseY));
+    public findNodeByMouseCoordinates(mouseX: number, mouseY: number): boolean {
+        const position = new Position(mouseX, mouseY);
+        const foundNode = this.findNodeByPosition(position);
 
-        if (foundNode == null) {
-            return false;
+        if (foundNode == null) return false;
+
+        if (foundNode.hasChildren) {
+            this.collapseNodeChildren(foundNode.children);
         }
 
-        if (foundNode && foundNode.hasChildren) {
-            for (const child of foundNode.children) {
-                child.collapse();
-            }
-        }
+        const currentState = this.getState();
+        this.params.notify(currentState);
 
         return true;
     }
 
-    find(mouseX: number, mouseY: number) {
-        const n = this.findNodeByPosition(new Position(mouseX, mouseY));
-        console.log(n);
-        return Boolean(n);
+    private collapseNodeChildren(nodes: Array<SourceTreeNode>): void {
+        for (const node of nodes) {
+            node.collapse();
+        }
     }
 
-    findNodeByPosition(targetPosition: Position) {
+    private findNodeByPosition(targetPosition: Position) {
         const queue: SourceTreeNode[] = [this.tree];
 
         while (queue.length > 0) {
