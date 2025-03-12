@@ -1,14 +1,33 @@
 import { type RectangleParams, Rectangle } from '../shapes';
-import { Text } from './Text';
+import { Text } from '../shapes/Text';
 
-export interface SchemeShapeParams extends RectangleParams {
+export interface FigureParams extends RectangleParams {
     title: string;
     text: string;
     primaryColor: string;
     secondaryColor: string;
 }
 
-export class SchemeShape extends Rectangle {
+// export function getColorByType(type: SourceItem['type']) {
+//     if (type === 'root') {
+//         return '#0c917c';
+//     }
+
+//     if (type === 'context') {
+//         return '#f6584c';
+//     }
+
+//     if (type === 'subcontext') {
+//         return '#fdb018';
+//     }
+
+//     if (type === 'feature') {
+//         return '#343434';
+//     }
+// }
+
+
+export class Figure extends Rectangle {
     headerFieldHeight: number = 20;
 
     header: Rectangle;
@@ -16,7 +35,7 @@ export class SchemeShape extends Rectangle {
     titleText: Text;
     bodyText: Text;
 
-    constructor(protected options: SchemeShapeParams) {
+    constructor(protected options: FigureParams) {
         super({
             ...options,
             fillColor: options.primaryColor,
