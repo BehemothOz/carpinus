@@ -1,0 +1,58 @@
+import { MeasureTextTool } from '../../MeasureTextTool';
+
+interface TextParams {
+    ctx: CanvasRenderingContext2D;
+    x: number;
+    y: number;
+    text: string;
+    fillColor?: string;
+    fontSize?: number;
+    textAlign?: CanvasTextAlign;
+    textBaseline?: CanvasTextBaseline;
+}
+
+const DEFAULT_FONT_SIZE = 16;
+const DEFAULT_COLOR = '#ffffff';
+
+export class Text {
+    private ctx: CanvasRenderingContext2D;
+    private x: number;
+    private y: number;
+    private text: string;
+    private fillColor: string;
+    private font: string;
+    private textAlign: CanvasTextAlign;
+    private textBaseline: CanvasTextBaseline;
+
+    constructor(params: TextParams) {
+        this.ctx = params.ctx;
+        this.x = params.x;
+        this.y = params.y;
+        this.text = params.text;
+
+        this.fillColor = this.getColorRule(params.fillColor);
+        this.font = this.getFontRule(params.fontSize);
+
+        this.textAlign = params.textAlign || 'center';
+        this.textBaseline = params.textBaseline || 'middle';
+    }
+
+    getFontRule(fontSize: number = DEFAULT_FONT_SIZE) {
+        return `${fontSize}px ${MeasureTextTool.fontFamily}`;
+    }
+
+    getColorRule(fillColor: string = DEFAULT_COLOR) {
+        return fillColor;
+    }
+
+    draw(): void {
+        const { ctx } = this;
+
+        ctx.fillStyle = this.fillColor;
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
+
+        ctx.fillText(this.text, this.x, this.y);
+    }
+}
