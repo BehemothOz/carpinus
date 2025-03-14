@@ -29,6 +29,11 @@ export class SourceTreeNodeBuilder {
         return this;
     }
 
+    setRenderingContext(ctx: CanvasRenderingContext2D) {
+        this.nodeParams.ctx = ctx;
+        return this;
+    }
+
     build() {
         return new SourceTreeNode(this.nodeParams as SourceTreeNodeParams);
     }

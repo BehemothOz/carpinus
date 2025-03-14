@@ -51,20 +51,15 @@ export class Scheme {
 
         if (foundNode == null) return false;
 
-        if (foundNode.hasChildren) {
-            this.collapseNodeChildren(foundNode.children);
-        }
-
-        const currentState = this.getState();
-        this.params.notify(currentState);
+        foundNode.collapseChildren();
+        this.notify();
 
         return true;
     }
 
-    private collapseNodeChildren(nodes: Array<SourceTreeNode>): void {
-        for (const node of nodes) {
-            node.collapse();
-        }
+    private notify() {
+        const currentState = this.getState();
+        this.params.notify(currentState);
     }
 
     private findNodeByPosition(targetPosition: Position) {

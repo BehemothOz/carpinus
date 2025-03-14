@@ -1,11 +1,11 @@
-import { Figure, type FigureParams } from './Figure';
+import { Figure, type BaseFigureParams } from './Figure';
 
 /*
     primary: #f6584c
     secondary: #a74037
 */
 export class ContextFigure extends Figure {
-    constructor(options: FigureParams) {
+    constructor(options: BaseFigureParams) {
         super({
             ...options,
             title: 'C O N T E X T',

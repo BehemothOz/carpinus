@@ -1,20 +1,19 @@
+import { type Position } from '../Dimensions';
+
 export interface ShapeParams {
     ctx: CanvasRenderingContext2D;
-    x: number;
-    y: number;
+    position: Position;
     fillColor?: string;
 }
 
 export abstract class Shape {
     protected ctx: CanvasRenderingContext2D;
-    protected x: number;
-    protected y: number;
+    protected position: Position;
     protected fillColor: string;
 
-    constructor({ ctx, x, y, fillColor = '#000000' }: ShapeParams) {
+    constructor({ ctx, position, fillColor = '#000000' }: ShapeParams) {
         this.ctx = ctx;
-        this.x = x;
-        this.y = y;
+        this.position = position;
         this.fillColor = fillColor;
     }
 

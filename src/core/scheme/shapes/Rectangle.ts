@@ -1,24 +1,22 @@
 import { Shape, type ShapeParams } from './Shape';
+import { type Size } from '../Dimensions';
 
 export interface RectangleParams extends ShapeParams {
-    width: number;
-    height: number;
+    size: Size;
 }
 
 export class Rectangle extends Shape {
-    protected width: number;
-    protected height: number;
+    protected size: Size;
 
     constructor(options: RectangleParams) {
         super(options);
 
-        this.width = options.width;
-        this.height = options.height;
+        this.size = options.size;
     }
 
     draw(): void {
-        const { ctx } = this;
-        ctx.fillStyle = this.fillColor;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        console.log('this.options.primaryColor', this.fillColor);
+        this.ctx.fillStyle = this.fillColor;
+        this.ctx.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
     }
 }

@@ -43,7 +43,6 @@ export class Scene {
         });
 
         this.state.onDraw((payload) => {
-            console.log('onDraw');
             const { viewport, scheme } = payload;
             const { offset, scale, canvasSize } = viewport;
 

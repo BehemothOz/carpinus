@@ -8,17 +8,17 @@ export const source: SourceItem = {
     name: 'root',
     type: 'root',
     children: [
-        {
-            name: 'Context 1',
-            type: 'context',
-            children: [
-                // {
-                //     name: 'Sub-Context 1.1',
-                //     type: 'subcontext',
-                //     children: [{ name: 'Sub-Context 1.1', type: 'subcontext', children: [] }],
-                // },
-            ],
-        },
+        // {
+        //     name: 'Context 1',
+        //     type: 'context',
+        //     children: [
+        //         {
+        //             name: 'Sub-Context 1.1',
+        //             type: 'subcontext',
+        //             children: [{ name: 'Sub-Context 1.1', type: 'subcontext', children: [] }],
+        //         },
+        //     ],
+        // },
         // {
         //     name: 'Context 2',
         //     type: 'context',

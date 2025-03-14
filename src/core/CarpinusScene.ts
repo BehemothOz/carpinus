@@ -6,11 +6,16 @@ import { type SourceItem } from '../__source';
 
 import { Rectangle } from './scheme/shapes/Rectangle';
 import { Line } from './scheme/shapes/Line';
+import { Point, Position, Size } from './scheme/Dimensions';
+import { Figure, RootFigure } from './scheme/figures';
+import { FigureFactory } from './scheme/Factory';
 
 interface CarpinusSceneOptions {
     container: HTMLElement;
     dataSource: SourceItem;
 }
+
+// TreeVisualizer
 
 export class CarpinusScene extends Scene {
     sourceTree: SourceTree;
@@ -28,15 +33,21 @@ export class CarpinusScene extends Scene {
             container,
             state,
             onSearchClick: (mouseX, mouseY) => {
-                return state.scheme.find(mouseX, mouseY);
+                return state.scheme.findNodeByMouseCoordinates(mouseX, mouseY);
             },
         });
 
         this.sourceTree = sourceTree;
     }
 
+    getState() {
+        return this.state;
+    }
+
     public initialize() {
+        console.log('CarpinusScene initialize called');
         this.sourceTree.create();
+        // this.toCenter();
     }
 
     public toCenter() {
@@ -61,15 +72,22 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
-        const { position, size, children } = node;
+        const { position, size, children, text, type } = node;
         console.log('drawScene');
-        const rectangle = new Rectangle({
+
+        if (node.isCollapsed) {
+            return;
+        }
+
+        // Создаем фигуру каждый раз с текущим контекстом
+        const figure = FigureFactory.create(type, {
             ctx: this.ctx,
-            x: position.x,
-            y: position.y,
-            width: size.width,
-            height: size.height,
+            text,
+            position,
+            size,
         });
+
+        figure.draw();
 
         if (children.length > 0) {
             const lastChildNode = children.at(-1) as SourceTreeNode;
@@ -77,10 +95,11 @@ export class CarpinusScene extends Scene {
             const startX = position.x + size.width / 2;
             const startY = position.y + size.height;
 
+            const startPosition = new Position(startX, startY);
+
             const line = new Line({
                 ctx: this.ctx,
-                x: startX,
-                y: startY,
+                position: startPosition,
             });
 
             children.forEach((child) => {
@@ -90,7 +109,5 @@ export class CarpinusScene extends Scene {
             line.lineTo(lastChildNode.position.x, lastChildNode.position.y);
             line.draw();
         }
-
-        rectangle.draw();
     }
 }

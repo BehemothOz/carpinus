@@ -1,9 +1,9 @@
 import { MeasureTextTool } from '../../MeasureTextTool';
+import { type Position } from '../Dimensions';
 
 interface TextParams {
     ctx: CanvasRenderingContext2D;
-    x: number;
-    y: number;
+    position: Position;
     text: string;
     fillColor?: string;
     fontSize?: number;
@@ -16,8 +16,7 @@ const DEFAULT_COLOR = '#ffffff';
 
 export class Text {
     private ctx: CanvasRenderingContext2D;
-    private x: number;
-    private y: number;
+    private position: Position;
     private text: string;
     private fillColor: string;
     private font: string;
@@ -26,8 +25,7 @@ export class Text {
 
     constructor(params: TextParams) {
         this.ctx = params.ctx;
-        this.x = params.x;
-        this.y = params.y;
+        this.position = params.position;
         this.text = params.text;
 
         this.fillColor = this.getColorRule(params.fillColor);
@@ -53,6 +51,6 @@ export class Text {
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
-        ctx.fillText(this.text, this.x, this.y);
+        ctx.fillText(this.text, this.position.x, this.position.y);
     }
 }

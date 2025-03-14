@@ -1,11 +1,11 @@
-import { Figure, type FigureParams } from './Figure';
+import { Figure, type BaseFigureParams } from './Figure';
 
 /*
     primary: #343434
     secondary: #252525
 */
 export class FeatureFigure extends Figure {
-    constructor(options: FigureParams) {
+    constructor(options: BaseFigureParams) {
         super({
             ...options,
             title: 'F E A T U R E',

@@ -9,6 +9,8 @@ const initialOptions = {
 };
 
 export class MeasureTextTool {
+    static fontFamily = 'Arial';
+
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private widthPart: number;

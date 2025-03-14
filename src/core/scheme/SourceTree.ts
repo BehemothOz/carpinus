@@ -28,8 +28,8 @@ export class SourceTree {
     private initialX: number = 0;
     private initialY: number = 0;
     private accumulatedOffset: number = 0;
-
     private scheme: Scheme;
+    private ctx: CanvasRenderingContext2D;
 
     tree: SourceTreeNode;
     sourceData: SourceItem;
@@ -39,9 +39,11 @@ export class SourceTree {
 
     constructor(params: SourceTreeParams) {
         this.measureTextTool = new MeasureTextTool();
-
         this.scheme = params.state.scheme;
         this.sourceData = params.sourceData;
+
+        const canvas = document.createElement('canvas');
+        this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
     public create(): SourceTreeNode {
@@ -56,9 +58,14 @@ export class SourceTree {
         });
 
         this.accumulatedOffset = 0;
-        this.scheme.setTree(tree, { width: this.w, height: this.h });
+        this.scheme.setState(tree, { width: this.w, height: this.h });
 
         return tree;
+    }
+
+    rebuild() {
+        const { tree } = this.scheme.getState();
+        this.rebuildTreeNodes(tree);
     }
 
     private createTreeNodes(params: CreatedTreeNodeParams) {
@@ -67,7 +74,7 @@ export class SourceTree {
         const nodeBuilder = new SourceTreeNodeBuilder();
 
         nodeBuilder.setText(node.name).setType(node.type);
-        nodeBuilder.setPosition(params.x, params.y);
+        nodeBuilder.setRenderingContext(this.ctx).setPosition(params.x, params.y);
 
         const children: SourceTreeNode[] = [];
 
@@ -99,44 +106,31 @@ export class SourceTree {
         return nodeBuilder.setSize(width, this.scheme.heightNode).setChildren(children).build();
     }
 
-    // private changeTreeNodes(params: CreatedTreeNodeParams) {
-    //     const { scheme } = this.state;
-    //     const { node, width } = params;
-
-    //     const nodeBuilder = new SourceTreeNodeBuilder();
-
-    //     nodeBuilder.setText(node.name).setType(node.type);
-    //     nodeBuilder.setPosition(params.x, params.y);
-
-    //     const children: SourceTreeNode[] = [];
-
-    //     this.accumulatedOffset += 1;
-
-    //     this.w = Math.max(this.w, params.x + width);
-    //     this.h = Math.max(this.h, params.y + scheme.heightNode);
-
-    //     if (node.children.length > 0) {
-    //         const width = this.calculateMaxWidthFromNodes(node.children);
-
-    //         for (const child of node.children) {
-    //             const x = params.x + params.width + scheme.gap.x;
-    //             const y = (scheme.heightNode + scheme.gap.y) * this.accumulatedOffset;
-
-    //             const childOptions: CreatedTreeNodeParams = {
-    //                 node: child,
-    //                 x,
-    //                 y,
-    //                 width,
-    //                 level: params.level + 1,
-    //             };
-
-    //             const childNode = this.createTreeNodes(childOptions);
-    //             children.push(childNode);
-    //         }
-    //     }
-
-    //     return nodeBuilder.setSize(width, scheme.heightNode).setChildren(children).build();
-    // }
+    private rebuildTreeNodes(node: SourceTreeNode) {
+        // if (node.isCollapsed) {
+        // }
+        // const children: SourceTreeNode[] = [];
+        // this.accumulatedOffset += 1;
+        // this.w = Math.max(this.w, params.x + width);
+        // this.h = Math.max(this.h, params.y + scheme.heightNode);
+        // if (node.children.length > 0) {
+        //     const width = this.calculateMaxWidthFromNodes(node.children);
+        //     for (const child of node.children) {
+        //         const x = params.x + params.width + scheme.gap.x;
+        //         const y = (scheme.heightNode + scheme.gap.y) * this.accumulatedOffset;
+        //         const childOptions: CreatedTreeNodeParams = {
+        //             node: child,
+        //             x,
+        //             y,
+        //             width,
+        //             level: params.level + 1,
+        //         };
+        //         const childNode = this.createTreeNodes(childOptions);
+        //         children.push(childNode);
+        //     }
+        // }
+        // return node;
+    }
 
     private calculateNodeWidth(item: SourceItem): ExtendedSourceItem {
         const children: Array<ExtendedSourceItem> = [];

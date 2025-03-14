@@ -1,5 +1,5 @@
 import { Shape, type ShapeParams } from './Shape';
-import { type Point } from '../Dimensions';
+import { Point } from '../Dimensions';
 
 interface LineParams extends ShapeParams {
     strokeColor?: string;
@@ -11,22 +11,24 @@ export class Line extends Shape {
     private strokeColor: string;
     private lineWidth: number;
 
-    constructor({ ctx, x, y, fillColor = '#000000', strokeColor = '#000000', lineWidth = 1 }: LineParams) {
-        super({ ctx, x, y, fillColor });
+    constructor({ ctx, position, fillColor = '#000000', strokeColor = '#000000', lineWidth = 1 }: LineParams) {
+        super({ ctx, position, fillColor });
 
         this.strokeColor = strokeColor;
         this.lineWidth = lineWidth;
 
-        this.startAt(x, y);
+        const startPoint = new Point(position.x, position.y);
+        this.startAt(startPoint);
     }
 
-    private startAt(x: number, y: number): Line {
-        this.points.push({ x, y });
-        return this;
+    private startAt(point: Point) {
+        this.points.push(point);
     }
 
     lineTo(x: number, y: number): Line {
-        this.points.push({ x, y });
+        const point = new Point(x, y);
+        this.points.push(point);
+
         return this;
     }
 
