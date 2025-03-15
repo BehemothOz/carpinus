@@ -1,6 +1,6 @@
-import { type RectangleParams, Rectangle } from '../shapes';
+import { type RectangleParams, Rectangle, Text } from '../shapes';
 import { Position, Size } from '../Dimensions';
-import { Text } from '../shapes/Text';
+import { Edge } from './Edge';
 
 export interface BaseFigureParams extends RectangleParams {
     text: string;
@@ -31,6 +31,10 @@ export class Figure extends Rectangle {
     private readonly headerText: Text;
     private readonly bodyText: Text;
 
+    private readonly edges: Array<Edge> = [];
+
+    readonly primaryColor: string;
+
     private static readonly HEADER_SETTINGS: HeaderSettings = {
         height: 20,
         paddingLeft: 4,
@@ -46,11 +50,12 @@ export class Figure extends Rectangle {
      * @param options - Figure parameters including dimensions, colors and texts
      */
     constructor(protected options: FigureParams) {
-        console.log();
         super({
             ...options,
             fillColor: options.primaryColor,
         });
+
+        this.primaryColor = options.primaryColor;
 
         this.header = this.createHeaderField();
         this.headerText = this.createHeaderText();

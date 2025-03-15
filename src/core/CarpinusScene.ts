@@ -10,6 +10,8 @@ import { Point, Position, Size } from './scheme/Dimensions';
 import { Figure, RootFigure } from './scheme/figures';
 import { FigureFactory } from './scheme/Factory';
 
+import { FigureEdges } from './scheme/figures/FigureEdges';
+
 interface CarpinusSceneOptions {
     container: HTMLElement;
     dataSource: SourceItem;
@@ -72,42 +74,22 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
-        const { position, size, children, text, type } = node;
-        console.log('drawScene');
-
         if (node.isCollapsed) {
             return;
         }
 
-        // Создаем фигуру каждый раз с текущим контекстом
-        const figure = FigureFactory.create(type, {
-            ctx: this.ctx,
-            text,
-            position,
-            size,
-        });
+        const params = { ctx: this.ctx, node };
 
-        figure.draw();
+        const figure = FigureFactory.create(params);
+        const edges = FigureEdges.create({ ...params, color: figure.primaryColor });
 
-        if (children.length > 0) {
-            const lastChildNode = children.at(-1) as SourceTreeNode;
-
-            const startX = position.x + size.width / 2;
-            const startY = position.y + size.height;
-
-            const startPosition = new Position(startX, startY);
-
-            const line = new Line({
-                ctx: this.ctx,
-                position: startPosition,
-            });
-
-            children.forEach((child) => {
+        if (node.children.length > 0) {
+            node.children.forEach((child) => {
                 this.drawScene(child);
             });
-
-            line.lineTo(lastChildNode.position.x, lastChildNode.position.y);
-            line.draw();
         }
+
+        FigureEdges.draw(edges);
+        figure.draw();
     }
 }

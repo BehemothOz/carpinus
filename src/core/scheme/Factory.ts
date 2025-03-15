@@ -1,5 +1,10 @@
 import { RootFigure, ContextFigure, SubcontextFigure, FeatureFigure, Figure, type BaseFigureParams } from './figures';
-import { type NodeType } from './SourceTreeNode';
+import { SourceTreeNode, type NodeType } from './SourceTreeNode';
+
+interface FigureFactoryCreatedParams {
+    ctx: CanvasRenderingContext2D;
+    node: SourceTreeNode;
+}
 
 export class FigureFactory {
     private static factories: Record<NodeType, new (options: BaseFigureParams) => Figure> = {
@@ -9,16 +14,19 @@ export class FigureFactory {
         feature: FeatureFigure,
     };
 
-    static create(type: NodeType, options: BaseFigureParams): Figure {
-        const factory = this.factories[type];
+    static create(params: FigureFactoryCreatedParams): Figure {
+        const { ctx, node } = params;
+        const { type, text, position, size } = node;
 
-        if (!factory) {
+        const Factory = this.factories[type];
+
+        if (!Factory) {
             throw new Error(
                 `Factory for type "${type}" not found. Available types: ${Object.keys(this.factories).join(', ')}`
             );
         }
 
-        return new factory(options);
+        return new Factory({ ctx, text, position, size });
     }
 
     static registerFactory(type: NodeType, factory: new (options: BaseFigureParams) => Figure): void {

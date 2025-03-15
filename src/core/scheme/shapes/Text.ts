@@ -1,7 +1,7 @@
 import { MeasureTextTool } from '../../MeasureTextTool';
 import { type Position } from '../Dimensions';
 
-interface TextParams {
+export interface TextParams {
     ctx: CanvasRenderingContext2D;
     position: Position;
     text: string;

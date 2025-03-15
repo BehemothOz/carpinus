@@ -1,7 +1,7 @@
 import { Shape, type ShapeParams } from './Shape';
 import { Point } from '../Dimensions';
 
-interface LineParams extends ShapeParams {
+export interface LineParams extends ShapeParams {
     strokeColor?: string;
     lineWidth?: number;
 }
@@ -30,6 +30,10 @@ export class Line extends Shape {
         this.points.push(point);
 
         return this;
+    }
+
+    getLastPoint(): Point {
+        return this.points.at(-1) as Point;
     }
 
     draw(): void {

@@ -1,7 +1,4 @@
 import { type Position, type Size } from './Dimensions';
-import { type Figure } from './figures';
-
-import { FigureFactory } from './Factory';
 
 export type NodeType = 'root' | 'context' | 'subcontext' | 'feature';
 
@@ -21,8 +18,6 @@ export class SourceTreeNode {
     position: Position;
     size: Size;
 
-    figure: Figure;
-
     children: Array<SourceTreeNode>;
 
     isChildrenCollapsed: boolean = false;
@@ -36,13 +31,6 @@ export class SourceTreeNode {
         this.size = params.size;
 
         this.children = params.children;
-
-        this.figure = FigureFactory.create(params.type, {
-            ctx: params.ctx,
-            text: this.text,
-            position: this.position,
-            size: this.size,
-        });
     }
 
     get hasChildren() {

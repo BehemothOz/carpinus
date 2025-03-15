@@ -8,7 +8,7 @@ abstract class Dimensions {
 export class Position extends Dimensions {}
 export class Offset extends Dimensions {}
 export class Gap extends Dimensions {}
-export class Point extends Dimensions {}
+export class Point extends Position {}
 
 export class Size {
     constructor(public width: number, public height: number) {

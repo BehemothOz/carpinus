@@ -107,29 +107,6 @@ export class SourceTree {
     }
 
     private rebuildTreeNodes(node: SourceTreeNode) {
-        // if (node.isCollapsed) {
-        // }
-        // const children: SourceTreeNode[] = [];
-        // this.accumulatedOffset += 1;
-        // this.w = Math.max(this.w, params.x + width);
-        // this.h = Math.max(this.h, params.y + scheme.heightNode);
-        // if (node.children.length > 0) {
-        //     const width = this.calculateMaxWidthFromNodes(node.children);
-        //     for (const child of node.children) {
-        //         const x = params.x + params.width + scheme.gap.x;
-        //         const y = (scheme.heightNode + scheme.gap.y) * this.accumulatedOffset;
-        //         const childOptions: CreatedTreeNodeParams = {
-        //             node: child,
-        //             x,
-        //             y,
-        //             width,
-        //             level: params.level + 1,
-        //         };
-        //         const childNode = this.createTreeNodes(childOptions);
-        //         children.push(childNode);
-        //     }
-        // }
-        // return node;
     }
 
     private calculateNodeWidth(item: SourceItem): ExtendedSourceItem {
