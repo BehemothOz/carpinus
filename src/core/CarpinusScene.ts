@@ -68,7 +68,7 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
-        const view = node.isChildrenCollapsed ? 'collapsed' : 'usual';
+        const view = node.isChildrenCollapsed && !node.isLast ? 'collapsed' : 'usual';
 
         if (node.isCollapsed) {
             return;

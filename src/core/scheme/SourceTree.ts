@@ -101,13 +101,14 @@ export class SourceTree {
                 const childNode = this.createTreeNodes(childOptions);
                 children.push(childNode);
             }
+        } else {
+            nodeBuilder.setIsLast(true);
         }
 
         return nodeBuilder.setSize(width, this.scheme.heightNode).setChildren(children).build();
     }
 
-    private rebuildTreeNodes(node: SourceTreeNode) {
-    }
+    private rebuildTreeNodes(node: SourceTreeNode) {}
 
     private calculateNodeWidth(item: SourceItem): ExtendedSourceItem {
         const children: Array<ExtendedSourceItem> = [];

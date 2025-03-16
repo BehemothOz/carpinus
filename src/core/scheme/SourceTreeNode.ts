@@ -8,6 +8,7 @@ export interface SourceTreeNodeParams {
     text: string;
     position: Position;
     size: Size;
+    isLast: boolean;
     children: SourceTreeNode[];
 }
 
@@ -22,6 +23,7 @@ export class SourceTreeNode {
 
     isChildrenCollapsed: boolean = false;
     isCollapsed: boolean = false;
+    isLast: boolean;
 
     constructor(params: SourceTreeNodeParams) {
         this.text = params.text;
@@ -30,6 +32,7 @@ export class SourceTreeNode {
         this.position = params.position;
         this.size = params.size;
 
+        this.isLast = params.isLast;
         this.children = params.children;
     }
 

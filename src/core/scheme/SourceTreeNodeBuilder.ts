@@ -29,6 +29,11 @@ export class SourceTreeNodeBuilder {
         return this;
     }
 
+    setIsLast(isLast: boolean) {
+        this.nodeParams.isLast = isLast;
+        return this;
+    }
+
     setRenderingContext(ctx: CanvasRenderingContext2D) {
         this.nodeParams.ctx = ctx;
         return this;
