@@ -50,6 +50,7 @@ export class Scheme {
         const foundNode = this.findNodeByPosition(position);
 
         if (foundNode == null) return false;
+        if (foundNode.isCollapsed) return false;
 
         foundNode.collapseChildren();
         this.notify();
