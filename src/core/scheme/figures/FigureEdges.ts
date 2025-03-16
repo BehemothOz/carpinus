@@ -29,7 +29,9 @@ export class FigureEdges {
                 ctx: options.ctx,
                 position: edgeStartPosition,
                 strokeColor: options.color,
-                segment: true,
+                segment: {
+                    color: options.color,
+                },
             });
 
             childEdge.lineTo(figureX, y);
@@ -49,11 +51,5 @@ export class FigureEdges {
 
     private static isLastIndex(children: Array<SourceTreeNode>): number {
         return children.length - 1;
-    }
-
-    static draw(edges: Array<Edge>) {
-        edges.forEach((edge) => {
-            edge.draw();
-        });
     }
 }

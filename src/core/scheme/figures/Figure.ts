@@ -1,9 +1,12 @@
 import { type RectangleParams, Rectangle, Text } from '../shapes';
 import { Position, Size } from '../Dimensions';
 import { Edge } from './Edge';
+import { type SourceTreeNode } from '../SourceTreeNode';
+import { FigureEdges } from './FigureEdges';
 
 export interface BaseFigureParams extends RectangleParams {
     text: string;
+    originalNode: SourceTreeNode;
 }
 
 export interface FigureParams extends BaseFigureParams {
@@ -33,8 +36,6 @@ export class Figure extends Rectangle {
 
     private readonly edges: Array<Edge> = [];
 
-    readonly primaryColor: string;
-
     private static readonly HEADER_SETTINGS: HeaderSettings = {
         height: 20,
         paddingLeft: 4,
@@ -55,11 +56,15 @@ export class Figure extends Rectangle {
             fillColor: options.primaryColor,
         });
 
-        this.primaryColor = options.primaryColor;
-
         this.header = this.createHeaderField();
         this.headerText = this.createHeaderText();
         this.bodyText = this.createBodyText();
+
+        this.edges = FigureEdges.create({
+            ctx: this.options.ctx,
+            node: this.options.originalNode,
+            color: this.options.primaryColor,
+        });
     }
 
     /**
@@ -131,5 +136,11 @@ export class Figure extends Rectangle {
         this.headerText.draw();
 
         this.bodyText.draw();
+    }
+
+    public drawEdges(): void {
+        this.edges.forEach((edge) => {
+            edge.draw();
+        });
     }
 }

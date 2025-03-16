@@ -26,7 +26,7 @@ export class FigureFactory {
             );
         }
 
-        return new Factory({ ctx, text, position, size });
+        return new Factory({ ctx, text, position, size, originalNode: node });
     }
 
     static registerFactory(type: NodeType, factory: new (options: BaseFigureParams) => Figure): void {

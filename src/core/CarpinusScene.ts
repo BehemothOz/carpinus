@@ -4,13 +4,7 @@ import { State } from './states';
 
 import { type SourceItem } from '../__source';
 
-import { Rectangle } from './scheme/shapes/Rectangle';
-import { Line } from './scheme/shapes/Line';
-import { Point, Position, Size } from './scheme/Dimensions';
-import { Figure, RootFigure } from './scheme/figures';
 import { FigureFactory } from './scheme/Factory';
-
-import { FigureEdges } from './scheme/figures/FigureEdges';
 
 interface CarpinusSceneOptions {
     container: HTMLElement;
@@ -78,10 +72,7 @@ export class CarpinusScene extends Scene {
             return;
         }
 
-        const params = { ctx: this.ctx, node };
-
-        const figure = FigureFactory.create(params);
-        const edges = FigureEdges.create({ ...params, color: figure.primaryColor });
+        const figure = FigureFactory.create({ ctx: this.ctx, node });
 
         if (node.children.length > 0) {
             node.children.forEach((child) => {
@@ -89,7 +80,10 @@ export class CarpinusScene extends Scene {
             });
         }
 
-        FigureEdges.draw(edges);
         figure.draw();
+
+        if (!node.isChildrenCollapsed) {
+            figure.drawEdges();
+        }
     }
 }
