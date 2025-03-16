@@ -53,6 +53,7 @@ export class SourceTreeNode {
     }
 
     public collapse(flag: boolean) {
+        this.isChildrenCollapsed = flag;
         this.isCollapsed = flag;
     }
 }
