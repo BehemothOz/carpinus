@@ -15,6 +15,8 @@ export interface FigureParams extends BaseFigureParams {
     secondaryColor: string;
 }
 
+type ViewType = 'usual' | 'collapsed';
+
 interface HeaderSettings {
     height: number;
     paddingLeft: number;
@@ -51,9 +53,10 @@ export class Figure extends Rectangle {
      * @param options - Figure parameters including dimensions, colors and texts
      */
     constructor(protected options: FigureParams) {
+        const { ctx, primaryColor, originalNode } = options;
         super({
             ...options,
-            fillColor: options.primaryColor,
+            fillColor: primaryColor,
         });
 
         this.header = this.createHeaderField();
@@ -61,9 +64,9 @@ export class Figure extends Rectangle {
         this.bodyText = this.createBodyText();
 
         this.edges = FigureEdges.create({
-            ctx: this.options.ctx,
-            node: this.options.originalNode,
-            color: this.options.primaryColor,
+            ctx,
+            node: originalNode,
+            color: primaryColor,
         });
     }
 
@@ -125,17 +128,46 @@ export class Figure extends Rectangle {
         });
     }
 
+    private drawCollapsedView() {
+        const offset = 3;
+        const count = 5;
+        const transparentColor = '#ffffff';
+
+        for (let i = count; 0 <= i; i -= 1) {
+            const { position, size, primaryColor } = this.options;
+
+            const x = position.x + offset * i;
+            const y = position.y - offset * i;
+
+            const color = i % 2 === 0 ? primaryColor : transparentColor;
+
+            const rect = new Rectangle({
+                ctx: this.options.ctx,
+                position: new Position(x, y),
+                size,
+                fillColor: color,
+            });
+
+            rect.draw();
+        }
+    }
+
     /**
      * Renders the figure on the canvas
      * @public
      */
-    public draw(): void {
+    public draw(view: ViewType = 'usual'): void {
+        if (view === 'collapsed') {
+            this.drawCollapsedView();
+        }
+
         super.draw();
 
-        this.header.draw();
-        this.headerText.draw();
+        const elementsToDraw = [this.header, this.headerText, this.bodyText];
 
-        this.bodyText.draw();
+        elementsToDraw.forEach((element) => {
+            element.draw();
+        });
     }
 
     public drawEdges(): void {

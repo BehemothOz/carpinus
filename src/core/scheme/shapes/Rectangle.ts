@@ -15,7 +15,6 @@ export class Rectangle extends Shape {
     }
 
     draw(): void {
-        console.log('this.options.primaryColor', this.fillColor);
         this.ctx.fillStyle = this.fillColor;
         this.ctx.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
     }

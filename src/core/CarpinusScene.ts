@@ -68,6 +68,8 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
+        const view = node.isChildrenCollapsed ? 'collapsed' : 'usual';
+
         if (node.isCollapsed) {
             return;
         }
@@ -80,7 +82,7 @@ export class CarpinusScene extends Scene {
             });
         }
 
-        figure.draw();
+        figure.draw(view);
 
         if (!node.isChildrenCollapsed) {
             figure.drawEdges();
