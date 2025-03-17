@@ -33,6 +33,10 @@ export class CarpinusScene extends Scene {
             },
         });
 
+        state.onRebuild(() => {
+            this.sourceTree.rebuild();
+        });
+
         this.sourceTree = sourceTree;
     }
 
@@ -68,6 +72,7 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
+        // TODO: move to node class
         const view = node.isChildrenCollapsed && !node.isLast ? 'collapsed' : 'usual';
 
         if (node.isCollapsed) {

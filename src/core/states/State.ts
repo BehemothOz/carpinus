@@ -9,6 +9,7 @@ export interface NotifyPayload {
 
 interface ViewportStateEvents {
     draw: NotifyPayload;
+    rebuild: void;
 }
 
 export class State extends EventEmitter<ViewportStateEvents> {
@@ -34,10 +35,19 @@ export class State extends EventEmitter<ViewportStateEvents> {
                     scheme: schemePayload,
                 });
             },
+            rebuild: () => {
+                this.emit('rebuild');
+            },
         });
 
         this.viewport = viewport;
         this.scheme = scheme;
+    }
+
+    public onRebuild(cb: () => void) {
+        this.on('rebuild', () => {
+            cb();
+        });
     }
 
     public onDraw(cb: (payload: NotifyPayload) => void) {

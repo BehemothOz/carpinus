@@ -3,6 +3,7 @@ import { SourceTreeNode } from '../scheme/SourceTreeNode';
 
 interface SchemeParams {
     notify: (scheme: SchemeNotifiedPayload) => void;
+    rebuild: () => void;
 }
 
 export interface SchemeNotifiedPayload {
@@ -41,8 +42,7 @@ export class Scheme {
         this.tree = tree;
         this.measure = measure;
 
-        const currentState = this.getState();
-        this.params.notify(currentState);
+        this.notify();
     }
 
     public findNodeByMouseCoordinates(mouseX: number, mouseY: number): boolean {
@@ -53,8 +53,8 @@ export class Scheme {
         if (foundNode.isCollapsed) return false;
 
         foundNode.collapseChildren();
-        this.notify();
 
+        this.params.rebuild();
         return true;
     }
 

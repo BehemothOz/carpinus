@@ -4,6 +4,7 @@ import { MeasureTextTool } from '../MeasureTextTool';
 import { type State, type Scheme } from '../states';
 
 import { type SourceItem } from '../../__source';
+import { Position, Size } from './Dimensions';
 
 interface ExtendedSourceItem extends SourceItem {
     width: number;
@@ -34,6 +35,7 @@ export class SourceTree {
     tree: SourceTreeNode;
     sourceData: SourceItem;
 
+    private measure: Size = new Size(0, 0);
     w: number = 0;
     h: number = 0;
 
@@ -56,7 +58,7 @@ export class SourceTree {
             width: 100,
             level: 0,
         });
-
+        console.log(tree);
         this.accumulatedOffset = 0;
         this.scheme.setState(tree, { width: this.w, height: this.h });
 
@@ -65,7 +67,11 @@ export class SourceTree {
 
     rebuild() {
         const { tree } = this.scheme.getState();
-        this.rebuildTreeNodes(tree);
+        const rebuildedTree = this.rebuildTreeNodes(tree);
+
+        this.accumulatedOffset = 0;
+
+        this.scheme.setState(rebuildedTree, { width: this.w, height: this.h });
     }
 
     private createTreeNodes(params: CreatedTreeNodeParams) {
@@ -108,7 +114,37 @@ export class SourceTree {
         return nodeBuilder.setSize(width, this.scheme.heightNode).setChildren(children).build();
     }
 
-    private rebuildTreeNodes(node: SourceTreeNode) {}
+    private rebuildTreeNodes(node: SourceTreeNode) {
+        const { position, size } = node;
+
+        const children: SourceTreeNode[] = [];
+
+        this.accumulatedOffset += 1;
+
+        this.w = Math.max(this.w, position.x + size.width);
+        this.h = Math.max(this.h, position.y + size.height);
+
+        if (node.isChildrenCollapsed) {
+            return node;
+        }
+
+        if (node.children.length > 0) {
+            for (const child of node.children) {
+                const { size } = child;
+
+                const x = position.x + size.width + this.scheme.gap.x;
+                const y = (size.height + this.scheme.gap.y) * this.accumulatedOffset;
+
+                child.changePosition(new Position(x, y));
+
+                const childNode = this.rebuildTreeNodes(child);
+                children.push(childNode);
+            }
+        }
+
+        node.changeChildren(children);
+        return node;
+    }
 
     private calculateNodeWidth(item: SourceItem): ExtendedSourceItem {
         const children: Array<ExtendedSourceItem> = [];

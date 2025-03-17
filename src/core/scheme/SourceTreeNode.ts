@@ -36,6 +36,14 @@ export class SourceTreeNode {
         this.children = params.children;
     }
 
+    changePosition(position: Position) {
+        this.position = position;
+    }
+
+    changeChildren(children: SourceTreeNode[]) {
+        this.children = children;
+    }
+
     get hasChildren() {
         return this.children.length > 0;
     }
