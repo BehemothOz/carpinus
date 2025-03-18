@@ -4,7 +4,7 @@ import { MeasureTextTool } from '../MeasureTextTool';
 import { type State, type Scheme } from '../states';
 
 import { type SourceItem } from '../../__source';
-import { Position, Size } from './Dimensions';
+import { Size } from './Dimensions';
 
 interface ExtendedSourceItem extends SourceItem {
     width: number;
@@ -36,8 +36,6 @@ export class SourceTree {
     sourceData: SourceItem;
 
     private measure: Size = new Size(0, 0);
-    w: number = 0;
-    h: number = 0;
 
     constructor(params: SourceTreeParams) {
         this.measureTextTool = new MeasureTextTool();
@@ -48,7 +46,7 @@ export class SourceTree {
         this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
-    public create(): SourceTreeNode {
+    public create() {
         const extendedSource: ExtendedSourceItem = this.calculateNodeWidth(this.sourceData);
 
         const tree = this.createTreeNodes({
@@ -58,20 +56,22 @@ export class SourceTree {
             width: 100,
             level: 0,
         });
-        console.log(tree);
-        this.accumulatedOffset = 0;
-        this.scheme.setState(tree, { width: this.w, height: this.h });
 
-        return tree;
+        this.updateSchemeState(tree);
     }
 
     rebuild() {
         const { tree } = this.scheme.getState();
         const rebuildedTree = this.rebuildTreeNodes(tree);
 
-        this.accumulatedOffset = 0;
+        this.updateSchemeState(rebuildedTree);
+    }
 
-        this.scheme.setState(rebuildedTree, { width: this.w, height: this.h });
+    private updateSchemeState(tree: SourceTreeNode) {
+        this.scheme.setState(tree, { width: this.measure.width, height: this.measure.height });
+
+        this.accumulatedOffset = 0;
+        this.measure = new Size(0, 0);
     }
 
     private createTreeNodes(params: CreatedTreeNodeParams) {
@@ -86,8 +86,8 @@ export class SourceTree {
 
         this.accumulatedOffset += 1;
 
-        this.w = Math.max(this.w, params.x + width);
-        this.h = Math.max(this.h, params.y + this.scheme.heightNode);
+        this.measure.width = Math.max(this.measure.width, params.x + width);
+        this.measure.height = Math.max(this.measure.height, params.y + this.scheme.heightNode);
 
         if (node.children.length > 0) {
             const width = this.calculateMaxWidthFromNodes(node.children);
@@ -121,8 +121,8 @@ export class SourceTree {
 
         this.accumulatedOffset += 1;
 
-        this.w = Math.max(this.w, position.x + size.width);
-        this.h = Math.max(this.h, position.y + size.height);
+        this.measure.width = Math.max(this.measure.width, position.x + size.width);
+        this.measure.height = Math.max(this.measure.height, position.y + size.height);
 
         if (node.isChildrenCollapsed) {
             return node;
@@ -130,12 +130,9 @@ export class SourceTree {
 
         if (node.children.length > 0) {
             for (const child of node.children) {
-                const { size } = child;
+                const y = (child.size.height + this.scheme.gap.y) * this.accumulatedOffset;
 
-                const x = position.x + size.width + this.scheme.gap.x;
-                const y = (size.height + this.scheme.gap.y) * this.accumulatedOffset;
-
-                child.changePosition(new Position(x, y));
+                child.changePosition(child.position.x, y);
 
                 const childNode = this.rebuildTreeNodes(child);
                 children.push(childNode);
