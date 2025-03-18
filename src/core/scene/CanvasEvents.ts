@@ -28,25 +28,27 @@ export class CanvasEvents extends Formulas {
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.canvas.addEventListener('click', this.onClick.bind(this));
         this.canvas.addEventListener('wheel', this.onWheel.bind(this));
     }
 
     private onMouseDown(event: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
+        this.isDragging = true;
+        this.lastMouseX = event.clientX;
+        this.lastMouseY = event.clientY;
+    }
 
+    private onClick(event: MouseEvent) {
+        if (!event.ctrlKey) return;
+
+        const rect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
         if (this.onSearchClick) {
             const coordinates = this.toSceneCoordinates(mouseX, mouseY);
-            const searchResult = this.onSearchClick(coordinates.x, coordinates.y);
-
-            if (searchResult) return;
+            this.onSearchClick(coordinates.x, coordinates.y);
         }
-
-        this.isDragging = true;
-        this.lastMouseX = event.clientX;
-        this.lastMouseY = event.clientY;
     }
 
     private onMouseMove(event: MouseEvent) {
