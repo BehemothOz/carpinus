@@ -23,7 +23,7 @@ export class SourceTreeNode {
 
     isChildrenCollapsed: boolean = false;
     isCollapsed: boolean = false;
-    isLast: boolean;
+    isLast: boolean = false;
 
     constructor(params: SourceTreeNodeParams) {
         this.text = params.text;
@@ -36,8 +36,9 @@ export class SourceTreeNode {
         this.children = params.children;
     }
 
-    changePosition(position: Position) {
-        this.position = position;
+    changePosition(x: number, y: number) {
+        this.position.x = x;
+        this.position.y = y;
     }
 
     changeChildren(children: SourceTreeNode[]) {

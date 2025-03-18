@@ -11,8 +11,6 @@ interface CarpinusSceneOptions {
     dataSource: SourceItem;
 }
 
-// TreeVisualizer
-
 export class CarpinusScene extends Scene {
     sourceTree: SourceTree;
 
