@@ -1,7 +1,7 @@
 import { type RectangleParams, Rectangle, Text } from '../shapes';
 import { Position, Size } from '../Dimensions';
 import { Edge } from './Edge';
-import { type SourceTreeNode } from '../SourceTreeNode';
+import { NodeView, type SourceTreeNode } from '../SourceTreeNode';
 import { FigureEdges } from './FigureEdges';
 
 export interface BaseFigureParams extends RectangleParams {
@@ -14,8 +14,6 @@ export interface FigureParams extends BaseFigureParams {
     primaryColor: string;
     secondaryColor: string;
 }
-
-type ViewType = 'usual' | 'collapsed';
 
 interface HeaderSettings {
     height: number;
@@ -37,6 +35,7 @@ export class Figure extends Rectangle {
     private readonly bodyText: Text;
 
     private readonly edges: Array<Edge> = [];
+    private readonly view: NodeView;
 
     private static readonly HEADER_SETTINGS: HeaderSettings = {
         height: 20,
@@ -62,6 +61,8 @@ export class Figure extends Rectangle {
         this.header = this.createHeaderField();
         this.headerText = this.createHeaderText();
         this.bodyText = this.createBodyText();
+
+        this.view = originalNode.view;
 
         this.edges = FigureEdges.create({
             ctx,
@@ -156,8 +157,8 @@ export class Figure extends Rectangle {
      * Renders the figure on the canvas
      * @public
      */
-    public draw(view: ViewType = 'usual'): void {
-        if (view === 'collapsed') {
+    public draw(): void {
+        if (this.view === 'collapsed') {
             this.drawCollapsedView();
         }
 

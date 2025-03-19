@@ -1,6 +1,7 @@
 import { type Position, type Size } from './Dimensions';
 
 export type NodeType = 'root' | 'context' | 'subcontext' | 'feature';
+export type NodeView = 'usual' | 'collapsed' | 'hidden';
 
 export interface SourceTreeNodeParams {
     ctx: CanvasRenderingContext2D;
@@ -18,6 +19,7 @@ export class SourceTreeNode {
 
     position: Position;
     size: Size;
+    view: NodeView;
 
     children: Array<SourceTreeNode>;
 
@@ -34,6 +36,8 @@ export class SourceTreeNode {
 
         this.isLast = params.isLast;
         this.children = params.children;
+
+        this.view = 'usual';
     }
 
     changePosition(x: number, y: number) {
@@ -51,6 +55,7 @@ export class SourceTreeNode {
 
     public collapseChildren() {
         this.isChildrenCollapsed = !this.isChildrenCollapsed;
+        this.setView();
 
         const recursivelyCollapseChildren = (node: SourceTreeNode) => {
             if (node.hasChildren) {
@@ -62,6 +67,14 @@ export class SourceTreeNode {
         };
 
         recursivelyCollapseChildren(this);
+    }
+
+    private setView() {
+        if (this.isChildrenCollapsed && !this.isLast) {
+            this.view = 'collapsed';
+        } else {
+            this.view = 'usual';
+        }
     }
 
     public collapse(flag: boolean) {

@@ -1,7 +1,7 @@
 import { CarpinusScene } from './core/CarpinusScene';
 import { source } from './__source';
 
-// import { Downloader } from './core/downloader';
+import { Downloader } from './core/downloader';
 
 export class Carpinus {
     constructor() {
@@ -17,14 +17,14 @@ export class Carpinus {
 
         scene.initialize();
 
-        // const downloader = new Downloader(scene);
+        const downloader = new Downloader(scene);
 
         buttonCenter.addEventListener('click', () => {
             console.log('buttonCenter clicked');
         });
 
         buttonDownload.addEventListener('click', () => {
-            console.log('buttonDownload clicked');
+            downloader.download();
         });
     }
 }

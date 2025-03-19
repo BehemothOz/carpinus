@@ -1,78 +1,67 @@
-import { CarpinusScene } from '../CarpinusScene';
-import { SourceTreeNode } from '../scheme';
-import { Line } from '../scheme/shapes/Line';
-import { Rectangle } from '../scheme/shapes/Rectangle';
+import { CarpinusScene } from "../CarpinusScene";
+import { SourceTreeNode } from "../scheme";
+import { FigureFactory } from "../scheme/Factory";
 
 export class Downloader {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
     constructor(private carpinusScene: CarpinusScene) {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        canvas.style.background = '#ffffff';
+        const backgroundCanvas = document.createElement('canvas');
+        const ctx = backgroundCanvas.getContext('2d') as CanvasRenderingContext2D;
+        backgroundCanvas.style.background = '#ffffff';
 
-        this.canvas = canvas;
+        this.canvas = backgroundCanvas;
         this.ctx = ctx;
 
         const { scheme } = carpinusScene.getState();
-
         const schemeState = scheme.getState();
 
-        canvas.width = schemeState.measure.width;
-        canvas.height = schemeState.measure.height;
-
-        console.log(schemeState);
+        backgroundCanvas.width = schemeState.measure.width;
+        backgroundCanvas.height = schemeState.measure.height;
 
         this.drawScene(schemeState.tree);
-
-        document.body.append(canvas);
     }
 
-    download() {
+    download(scale = 2) {
+        const originalWidth = this.canvas.width;
+        const originalHeight = this.canvas.height;
+
+        this.canvas.width = originalWidth * scale;
+        this.canvas.height = originalHeight * scale;
+
+        this.ctx.scale(scale, scale);
+
+        const { scheme } = this.carpinusScene.getState();
+        this.drawScene(scheme.getState().tree);
+
+        // Скачиваем изображение
         const img = this.canvas.toDataURL('image/png');
         const link = document.createElement('a');
         link.href = img;
-        link.download = 'tree.png';
+        link.download = `conway_errors_visualization_${Date.now()}.png`;
         link.click();
     }
 
-    protected drawScene(node: SourceTreeNode) {
-        const { position, size, children } = node;
-        console.log('drawScene');
+    drawScene(node: SourceTreeNode) {
+        const view = node.isChildrenCollapsed && !node.isLast ? 'collapsed' : 'usual';
 
         if (node.isCollapsed) {
             return;
         }
 
-        const rectangle = new Rectangle({
-            ctx: this.ctx,
-            x: position.x,
-            y: position.y,
-            width: size.width,
-            height: size.height,
-        });
+        const figure = FigureFactory.create({ ctx: this.ctx, node });
 
-        if (children.length > 0) {
-            const lastChildNode = children.at(-1) as SourceTreeNode;
-
-            const startX = position.x + size.width / 2;
-            const startY = position.y + size.height;
-
-            const line = new Line({
-                ctx: this.ctx,
-                x: startX,
-                y: startY,
-            });
-
-            children.forEach((child) => {
+        if (node.children.length > 0) {
+            node.children.forEach((child) => {
                 this.drawScene(child);
             });
-
-            line.lineTo(lastChildNode.position.x, lastChildNode.position.y);
-            line.draw();
         }
 
-        rectangle.draw();
+        figure.draw();
+
+        if (!node.isChildrenCollapsed) {
+            figure.drawEdges();
+        }
     }
 }

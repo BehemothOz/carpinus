@@ -9,7 +9,6 @@ export class RootFigure extends Figure {
         super({
             ...options,
             title: 'R O O T',
-            
             primaryColor: '#4c78f6',
             secondaryColor: '#3752a7',
         });

@@ -45,7 +45,6 @@ export class CarpinusScene extends Scene {
     public initialize() {
         console.log('CarpinusScene initialize called');
         this.sourceTree.create();
-        // this.toCenter();
     }
 
     public toCenter() {
@@ -70,9 +69,6 @@ export class CarpinusScene extends Scene {
     }
 
     protected drawScene(node: SourceTreeNode) {
-        // TODO: move to node class
-        const view = node.isChildrenCollapsed && !node.isLast ? 'collapsed' : 'usual';
-
         if (node.isCollapsed) {
             return;
         }
@@ -85,7 +81,7 @@ export class CarpinusScene extends Scene {
             });
         }
 
-        figure.draw(view);
+        figure.draw();
 
         if (!node.isChildrenCollapsed) {
             figure.drawEdges();
