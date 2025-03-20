@@ -17,14 +17,14 @@ export class Carpinus {
 
         scene.initialize();
 
-        const downloader = new Downloader(scene);
+        const downloader = new Downloader();
 
         buttonCenter.addEventListener('click', () => {
             console.log('buttonCenter clicked');
         });
 
         buttonDownload.addEventListener('click', () => {
-            downloader.download();
+            downloader.download(scene);
         });
     }
 }
