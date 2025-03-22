@@ -61,14 +61,28 @@ export class Scene {
         throw new Error('Method drawScene must be implemented in child class');
     }
 
+    public toCenter() {
+        const { viewport, scheme } = this.state;
+
+        const { measure: schemeSize } = scheme.getState();
+        const sceneSize = this.canvasManager.getContainerSize();
+
+        const scaleX = sceneSize.width / schemeSize.width;
+        const scaleY = sceneSize.height / schemeSize.height;
+
+        const newScale = Math.min(scaleX, scaleY);
+
+        const offsetX = (sceneSize.width - schemeSize.width * newScale) / 2;
+        const offsetY = (sceneSize.height - schemeSize.height * newScale) / 2;
+
+        viewport.changeScale(newScale);
+        viewport.changeOffset({ x: offsetX, y: offsetY });
+    }
+
     public getSchemeSize() {
         const { scheme } = this.state;
 
         return scheme.getState().measure;
-    }
-
-    public getSceneSize() {
-        return this.canvasManager.getContainerSize();
     }
 
     public destroy() {

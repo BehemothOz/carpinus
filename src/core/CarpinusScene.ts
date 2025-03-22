@@ -43,29 +43,7 @@ export class CarpinusScene extends Scene {
     }
 
     public initialize() {
-        console.log('CarpinusScene initialize called');
         this.sourceTree.create();
-    }
-
-    public toCenter() {
-        const { viewport } = this.state;
-
-        const sceneSize = this.getSceneSize();
-        const schemeSize = this.getSchemeSize();
-
-        const scaleX = sceneSize.width / schemeSize.width;
-        const scaleY = sceneSize.height / schemeSize.height;
-
-        const newScale = Math.min(scaleX, scaleY);
-
-        const offsetX = (sceneSize.width - schemeSize.width * newScale) / 2;
-        const offsetY = (sceneSize.height - schemeSize.height * newScale) / 2;
-
-        const worldOffsetX = offsetX / newScale;
-        const worldOffsetY = offsetY / newScale;
-
-        viewport.changeScale(newScale);
-        viewport.changeOffset({ x: worldOffsetX, y: worldOffsetY });
     }
 
     protected drawScene(node: SourceTreeNode) {

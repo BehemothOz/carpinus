@@ -20,7 +20,7 @@ export class Carpinus {
         const downloader = new Downloader();
 
         buttonCenter.addEventListener('click', () => {
-            console.log('buttonCenter clicked');
+            scene.toCenter();
         });
 
         buttonDownload.addEventListener('click', () => {
