@@ -1,18 +1,11 @@
 import { Carpinus } from './carpinus';
 
-class App {
-    constructor() {
-        new Carpinus();
-    }
-}
+new Carpinus();
 
-new App();
 document.fonts.ready.then((r) => {
-    console.log('Все шрифты загружены');
-    console.log(r);
+    console.log('All fonts are loaded');
 
     document.fonts.forEach((fontFace) => {
-        console.log('Загружен шрифт:', fontFace.family, fontFace.weight, fontFace.style);
+        console.log('Font loaded:', fontFace.family, fontFace.weight, fontFace.style);
     });
-    // Ваш код, который должен выполниться после загрузки шрифтов
 });

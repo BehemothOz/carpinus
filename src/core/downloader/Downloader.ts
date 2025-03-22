@@ -10,6 +10,12 @@ export class Downloader {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
+    private padding: number = 10;
+    /**
+     * The scale factor for the output image (e.g., 2 for 2x resolution)
+     */
+    private scale: number = 2;
+
     /**
      * Creates a new Downloader instance.
      * Initializes a temporary canvas for rendering.
@@ -30,18 +36,16 @@ export class Downloader {
     /**
      * Downloads the current state of the CarpinusScene as a PNG image.
      * @param {CarpinusScene} carpinusScene - The scene to capture
-     * @param {number} [scale=2] - The scale factor for the output image (e.g., 2 for 2x resolution)
      * @throws {Error} If rendering or download fails
      */
-    public download(carpinusScene: CarpinusScene, scale: number = 2) {
+    public download(carpinusScene: CarpinusScene) {
         try {
             const { scheme } = carpinusScene.getState();
             const schemeState = scheme.getState();
 
-            this.canvas.width = schemeState.measure.width * scale;
-            this.canvas.height = schemeState.measure.height * scale;
+            this.canvas.width = (schemeState.measure.width + this.padding) * this.scale;
+            this.canvas.height = (schemeState.measure.height + this.padding) * this.scale;
 
-            this.ctx.scale(scale, scale);
             this.drawScene(schemeState.tree);
 
             const link = this.createLink();
@@ -72,6 +76,9 @@ export class Downloader {
     private drawScene(node: SourceTreeNode) {
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.translate(this.padding, this.padding);
+        this.ctx.scale(this.scale, this.scale);
 
         this.drawTree(node);
     }
