@@ -82,6 +82,7 @@ export class CanvasEvents extends Formulas {
         this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
         this.canvas.addEventListener('click', this.onClick.bind(this));
         this.canvas.addEventListener('wheel', this.onWheel.bind(this));
+        this.canvas.addEventListener('contextmenu', this.onContextMenu.bind(this));
     }
 
     /**
@@ -93,7 +94,7 @@ export class CanvasEvents extends Formulas {
         this.isDragging = true;
         this.lastMouseX = event.clientX;
         this.lastMouseY = event.clientY;
-        console.log('pointerdown', event);
+
         this.canvas.setPointerCapture(event.pointerId);
     }
 
@@ -175,6 +176,10 @@ export class CanvasEvents extends Formulas {
             x: mouseX - sceneX * changedScale,
             y: mouseY - sceneY * changedScale,
         });
+    }
+
+    private onContextMenu(event: MouseEvent) {
+        event.preventDefault();
     }
 
     /**
