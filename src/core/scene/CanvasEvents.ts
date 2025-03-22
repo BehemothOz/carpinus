@@ -6,11 +6,20 @@ import { Formulas } from '../Formulas';
  * @interface
  */
 interface CanvasEventsOptions {
-    /** The HTML canvas element to attach event listeners to */
+    /**
+     * The HTML canvas element to attach event listeners to
+     * @type {HTMLCanvasElement}
+     */
     canvas: HTMLCanvasElement;
-    /** The application state containing viewport information */
+    /**
+     * The application state containing viewport information
+     * @type {State}
+     */
     state: State;
-    /** Optional callback function that is called when a search click event occurs (Ctrl + click) */
+    /**
+     * Optional callback function that is called when a search click event occurs (Ctrl + click)
+     * @type {(mouseX: number, mouseY: number) => boolean}
+     */
     onSearchClick?: (mouseX: number, mouseY: number) => boolean;
 }
 
@@ -20,19 +29,37 @@ interface CanvasEventsOptions {
  * Manages viewport transformations including panning and zooming.
  */
 export class CanvasEvents extends Formulas {
-    /** The HTML canvas element that this class manages events for */
+    /**
+     * The HTML canvas element that this class manages events for
+     * @type {HTMLCanvasElement}
+     */
     private canvas: HTMLCanvasElement;
-    /** The viewport state that controls the canvas view transformations */
+    /**
+     * The viewport state that controls the canvas view transformations
+     * @type {Viewport}
+     */
     private viewport: Viewport;
-    /** Optional callback function for handling search click events (Ctrl + click) */
+    /**
+     * Optional callback function for handling search click events (Ctrl + click)
+     * @type {(mouseX: number, mouseY: number) => boolean}
+     */
     private onSearchClick?: (mouseX: number, mouseY: number) => boolean;
 
-    /** Flag indicating whether the canvas is currently being dragged */
-    private isDragging = false;
-    /** The last recorded X position of the mouse during dragging */
-    private lastMouseX = 0;
-    /** The last recorded Y position of the mouse during dragging */
-    private lastMouseY = 0;
+    /**
+     * Flag indicating whether the canvas is currently being dragged
+     * @type {boolean}
+     */
+    private isDragging: boolean = false;
+    /**
+     * The last recorded X position of the mouse during dragging
+     * @type {number}
+     */
+    private lastMouseX: number = 0;
+    /**
+     * The last recorded Y position of the mouse during dragging
+     * @type {number}
+     */
+    private lastMouseY: number = 0;
 
     /**
      * Creates a new instance of CanvasEvents.
@@ -50,9 +77,9 @@ export class CanvasEvents extends Formulas {
         this.viewport = state.viewport;
         this.onSearchClick = onSearchClick;
 
-        this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
+        this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
+        this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
         this.canvas.addEventListener('click', this.onClick.bind(this));
         this.canvas.addEventListener('wheel', this.onWheel.bind(this));
     }
@@ -60,12 +87,14 @@ export class CanvasEvents extends Formulas {
     /**
      * Handles mouse down events to initiate dragging.
      * Sets initial mouse position and enables dragging state.
-     * @param {MouseEvent} event - The mouse down event
+     * @param {PointerEvent} event - The pointer down event
      */
-    private onMouseDown(event: MouseEvent) {
+    private onPointerDown(event: PointerEvent) {
         this.isDragging = true;
         this.lastMouseX = event.clientX;
         this.lastMouseY = event.clientY;
+        console.log('pointerdown', event);
+        this.canvas.setPointerCapture(event.pointerId);
     }
 
     /**
@@ -77,9 +106,10 @@ export class CanvasEvents extends Formulas {
     private onClick(event: MouseEvent) {
         if (!event.ctrlKey) return;
 
-        const rect = this.canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const clientRect = this.canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - clientRect.left;
+        const mouseY = event.clientY - clientRect.top;
 
         if (this.onSearchClick) {
             const coordinates = this.toSceneCoordinates(mouseX, mouseY);
@@ -93,7 +123,7 @@ export class CanvasEvents extends Formulas {
      * Only active when dragging is enabled.
      * @param {MouseEvent} event - The mouse move event
      */
-    private onMouseMove(event: MouseEvent) {
+    private onPointerMove(event: PointerEvent) {
         if (!this.isDragging) return;
 
         const deltaX = event.clientX - this.lastMouseX;
@@ -112,8 +142,9 @@ export class CanvasEvents extends Formulas {
      * Handles mouse up events to end dragging.
      * Disables the dragging state.
      */
-    private onMouseUp() {
+    private onPointerUp(event: PointerEvent) {
         this.isDragging = false;
+        this.canvas.releasePointerCapture(event.pointerId);
     }
 
     /**
@@ -144,5 +175,16 @@ export class CanvasEvents extends Formulas {
             x: mouseX - sceneX * changedScale,
             y: mouseY - sceneY * changedScale,
         });
+    }
+
+    /**
+     * Removes all event listeners from the canvas.
+     */
+    public destroy() {
+        this.canvas.removeEventListener('pointerdown', this.onPointerDown);
+        this.canvas.removeEventListener('pointermove', this.onPointerMove);
+        this.canvas.removeEventListener('pointerup', this.onPointerUp);
+        this.canvas.removeEventListener('click', this.onClick);
+        this.canvas.removeEventListener('wheel', this.onWheel);
     }
 }
