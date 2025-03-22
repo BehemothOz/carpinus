@@ -10,7 +10,7 @@ export class Downloader {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
-    private padding: number = 10;
+    private padding: number = 26;
     /**
      * The scale factor for the output image (e.g., 2 for 2x resolution)
      */

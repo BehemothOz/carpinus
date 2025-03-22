@@ -140,6 +140,13 @@ export class Figure extends Rectangle {
             const x = position.x + offset * i;
             const y = position.y - offset * i;
 
+            /*
+                const width = size.width - offset * i * 2;
+                const height = size.height - offset * i * 2;
+
+                new Size(width, height)
+            */
+
             const color = i % 2 === 0 ? primaryColor : transparentColor;
 
             const rect = new Rectangle({
