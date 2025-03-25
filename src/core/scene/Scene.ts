@@ -43,17 +43,19 @@ export class Scene {
         });
 
         this.state.onDraw((payload) => {
-            const { viewport, scheme } = payload;
-            const { offset, scale, canvasSize } = viewport;
+            requestAnimationFrame(() => {
+                const { viewport, scheme } = payload;
+                const { offset, scale, canvasSize } = viewport;
 
-            this.ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+                this.ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
-            this.ctx.save();
-            this.ctx.translate(offset.x, offset.y);
-            this.ctx.scale(scale, scale);
+                this.ctx.save();
+                this.ctx.translate(offset.x, offset.y);
+                this.ctx.scale(scale, scale);
 
-            this.drawScene(scheme.tree);
-            this.ctx.restore();
+                this.drawScene(scheme.tree);
+                this.ctx.restore();
+            });
         });
     }
 
@@ -75,8 +77,8 @@ export class Scene {
         const offsetX = (sceneSize.width - schemeSize.width * newScale) / 2;
         const offsetY = (sceneSize.height - schemeSize.height * newScale) / 2;
 
-        viewport.changeScale(newScale);
-        viewport.changeOffset({ x: offsetX, y: offsetY });
+        viewport.changeScale(newScale, { x: offsetX, y: offsetY });
+        // viewport.changeOffset({ x: offsetX, y: offsetY });
     }
 
     public getSchemeSize() {

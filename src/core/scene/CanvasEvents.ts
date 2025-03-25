@@ -99,30 +99,10 @@ export class CanvasEvents extends Formulas {
     }
 
     /**
-     * Handles click events for search functionality.
-     * Only triggers when Ctrl key is pressed.
-     * Converts screen coordinates to scene coordinates before calling the search callback.
-     * @param {MouseEvent} event - The click event
-     */
-    private onClick(event: MouseEvent) {
-        if (!event.ctrlKey) return;
-
-        const clientRect = this.canvas.getBoundingClientRect();
-
-        const mouseX = event.clientX - clientRect.left;
-        const mouseY = event.clientY - clientRect.top;
-
-        if (this.onSearchClick) {
-            const coordinates = this.toSceneCoordinates(mouseX, mouseY);
-            this.onSearchClick(coordinates.x, coordinates.y);
-        }
-    }
-
-    /**
      * Handles mouse move events for dragging functionality.
      * Updates viewport offset based on mouse movement delta.
      * Only active when dragging is enabled.
-     * @param {MouseEvent} event - The mouse move event
+     * @param {PointerEvent} event - The pointer move event
      */
     private onPointerMove(event: PointerEvent) {
         if (!this.isDragging) return;
@@ -142,10 +122,31 @@ export class CanvasEvents extends Formulas {
     /**
      * Handles mouse up events to end dragging.
      * Disables the dragging state.
+     * @param {PointerEvent} event - The pointer up event
      */
     private onPointerUp(event: PointerEvent) {
         this.isDragging = false;
         this.canvas.releasePointerCapture(event.pointerId);
+    }
+
+    /**
+     * Handles click events for search functionality.
+     * Only triggers when Ctrl key is pressed.
+     * Converts screen coordinates to scene coordinates before calling the search callback.
+     * @param {MouseEvent} event - The click event
+     */
+    private onClick(event: MouseEvent) {
+        if (!event.ctrlKey) return;
+
+        const clientRect = this.canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - clientRect.left;
+        const mouseY = event.clientY - clientRect.top;
+
+        if (this.onSearchClick) {
+            const coordinates = this.toSceneCoordinates(mouseX, mouseY);
+            this.onSearchClick(coordinates.x, coordinates.y);
+        }
     }
 
     /**
@@ -171,19 +172,28 @@ export class CanvasEvents extends Formulas {
             changedScale *= 1 - zoomFactor;
         }
 
-        this.viewport.changeScale(changedScale);
-        this.viewport.changeOffset({
+        this.viewport.changeScale(changedScale, {
             x: mouseX - sceneX * changedScale,
             y: mouseY - sceneY * changedScale,
         });
+        // this.viewport.changeOffset({
+        //     x: mouseX - sceneX * changedScale,
+        //     y: mouseY - sceneY * changedScale,
+        // });
     }
 
+    /**
+     * Prevents the default context menu from appearing on right-click.
+     * @param {MouseEvent} event - The context menu event
+     */
     private onContextMenu(event: MouseEvent) {
         event.preventDefault();
     }
 
     /**
      * Removes all event listeners from the canvas.
+     * Should be called when the canvas events are no longer needed
+     * to prevent memory leaks and unwanted behavior.
      */
     public destroy() {
         this.canvas.removeEventListener('pointerdown', this.onPointerDown);
@@ -191,5 +201,6 @@ export class CanvasEvents extends Formulas {
         this.canvas.removeEventListener('pointerup', this.onPointerUp);
         this.canvas.removeEventListener('click', this.onClick);
         this.canvas.removeEventListener('wheel', this.onWheel);
+        this.canvas.removeEventListener('contextmenu', this.onContextMenu);
     }
 }

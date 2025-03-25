@@ -32,10 +32,6 @@ export class Viewport {
      * The factor by which the scale changes during zoom operations.
      */
     public readonly zoomFactor: number = 0.05;
-    /**
-     * Indicates whether a scene update is pending.
-     */
-    private isUpdatePending: boolean = false;
 
     constructor(private params: ViewportParams) {}
 
@@ -51,11 +47,15 @@ export class Viewport {
      * Changes the scale of the scene.
      * @param {number} scale - The new scale value.
      */
-    public changeScale(scale: number) {
+    public changeScale(scale: number, { x, y }: Offset) {
         if (this.scale === scale) return;
 
         this.scale = scale;
-        this.scheduleTransformUpdate();
+
+        this.offset.x = x;
+        this.offset.y = y;
+
+        this.emitTransformUpdate();
     }
 
     /**
@@ -68,7 +68,7 @@ export class Viewport {
         this.offset.x = x;
         this.offset.y = y;
 
-        this.scheduleTransformUpdate();
+        this.emitTransformUpdate();
     }
 
     /**
@@ -84,23 +84,10 @@ export class Viewport {
     }
 
     /**
-     * Schedules a transform update to be executed on the next animation frame.
-     */
-    private scheduleTransformUpdate() {
-        if (this.isUpdatePending) return;
-
-        this.isUpdatePending = true;
-        requestAnimationFrame(() => {
-            this.emitTransformUpdate();
-        });
-    }
-
-    /**
      * Emits a transform update event.
      * Updates the transform and emits a 'viewport-update' event.
      */
     private emitTransformUpdate() {
-        this.isUpdatePending = false;
         this.params.notify(this.getState());
     }
 }
