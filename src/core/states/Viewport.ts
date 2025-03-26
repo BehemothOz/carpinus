@@ -44,8 +44,15 @@ export class Viewport {
     }
 
     /**
-     * Changes the scale of the scene.
-     * @param {number} scale - The new scale value.
+     * Changes the scale of the scene and adjusts the offset to maintain the point under cursor.
+     * When zooming, the point under the cursor should remain fixed in screen coordinates.
+     * This requires adjusting both scale and offset together.
+     * 
+     * @param {number} scale - The new scale value
+     * @param {Offset} pivotOffset - The offset that should be maintained during zoom.
+     * 
+     * This is typically the screen coordinates of the cursor position
+     * when zooming, or the center of the viewport when centering.
      */
     public changeScale(scale: number, { x, y }: Offset) {
         if (this.scale === scale) return;
@@ -60,7 +67,9 @@ export class Viewport {
 
     /**
      * Changes the offset of the scene.
-     * @param {Offset} offset - The new offset value.
+     * This is typically used for panning operations.
+     * 
+     * @param {Offset} offset - The new offset value
      */
     public changeOffset({ x, y }: Offset) {
         if (this.offset.x === x && this.offset.y === y) return;
@@ -73,8 +82,10 @@ export class Viewport {
 
     /**
      * Changes the size of the canvas.
-     * @param {number} width - The new width of the canvas.
-     * @param {number} height - The new height of the canvas.
+     * This is called when the container size changes.
+     * 
+     * @param {number} width - The new width of the canvas
+     * @param {number} height - The new height of the canvas
      */
     public changeCanvasSize(width: number, height: number) {
         this.canvasSize.width = width;
@@ -84,8 +95,10 @@ export class Viewport {
     }
 
     /**
-     * Emits a transform update event.
-     * Updates the transform and emits a 'viewport-update' event.
+     * Notifies about viewport state changes.
+     * The actual rendering is handled by the Scene class using requestAnimationFrame.
+     * 
+     * @private
      */
     private emitTransformUpdate() {
         this.params.notify(this.getState());
