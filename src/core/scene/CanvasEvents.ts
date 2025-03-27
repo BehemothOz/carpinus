@@ -176,10 +176,6 @@ export class CanvasEvents extends Formulas {
             x: mouseX - sceneX * changedScale,
             y: mouseY - sceneY * changedScale,
         });
-        // this.viewport.changeOffset({
-        //     x: mouseX - sceneX * changedScale,
-        //     y: mouseY - sceneY * changedScale,
-        // });
     }
 
     /**

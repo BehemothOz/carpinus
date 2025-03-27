@@ -76,7 +76,6 @@ export class Scene {
      * Sets up the draw handler using requestAnimationFrame for optimized rendering.
      * This ensures that multiple state changes within a single frame
      * result in only one actual render.
-     *
      * @private
      */
     private setupDrawHandler() {
@@ -100,7 +99,6 @@ export class Scene {
     /**
      * Draws the scene on the canvas.
      * Must be implemented by child classes to provide specific rendering logic.
-     *
      * @param {SourceTreeNode} _tree - The tree structure to render
      * @protected
      */
@@ -131,7 +129,6 @@ export class Scene {
 
     /**
      * Returns the current size of the scheme.
-     *
      * @returns {Size} The size of the scheme
      */
     public getSchemeSize(): Size {
