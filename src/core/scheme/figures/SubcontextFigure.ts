@@ -1,9 +1,9 @@
 import { Figure, type BaseFigureParams } from './Figure';
 
-/*
-    primary: #fdb018
-    secondary: #b17b12
-*/
+/**
+ * A specialized Figure component representing a subcontext node in hierarchical diagrams.
+ * @extends Figure
+ */
 export class SubcontextFigure extends Figure {
     constructor(options: BaseFigureParams) {
         super({

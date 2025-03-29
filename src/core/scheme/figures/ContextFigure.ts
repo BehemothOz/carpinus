@@ -1,9 +1,9 @@
 import { Figure, type BaseFigureParams } from './Figure';
 
-/*
-    primary: #f6584c
-    secondary: #a74037
-*/
+/**
+ * A specialized Figure with predefined styling for context nodes.
+ * @extends Figure
+ */
 export class ContextFigure extends Figure {
     constructor(options: BaseFigureParams) {
         super({

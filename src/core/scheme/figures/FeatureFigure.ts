@@ -1,9 +1,9 @@
 import { Figure, type BaseFigureParams } from './Figure';
 
-/*
-    primary: #0c917c
-    secondary: #086658
-*/
+/**
+ * A specialized Figure component representing a feature node in the diagram.
+ * @extends Figure
+ */
 export class FeatureFigure extends Figure {
     constructor(options: BaseFigureParams) {
         super({

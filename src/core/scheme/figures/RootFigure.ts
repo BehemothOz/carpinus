@@ -1,9 +1,9 @@
 import { Figure, type BaseFigureParams } from './Figure';
 
-/*
-    primary: #4c78f6
-    secondary: #3752a7
-*/
+/**
+ * A specialized Figure component representing the root node in a hierarchical diagram.
+ * @extends Figure
+ */
 export class RootFigure extends Figure {
     constructor(options: BaseFigureParams) {
         super({
