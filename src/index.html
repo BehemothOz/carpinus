@@ -4,8 +4,139 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            @font-face {
+                font-family: Inter;
+                font-style: normal;
+                font-weight: 100 900;
+                font-display: swap;
+                src: url('./fonts/Inter.woff2') format('woff2');
+            }
+
+            body {
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 24px;
+                font-family: Inter, 'Helvetica Neue', Arial, sans-serif;
+                background-color: #f0f2f5;
+                overflow: hidden;
+            }
+
+            .container {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .title {
+                flex-shrink: 0;
+                padding: 4px 8px;
+                background-color: #ffffff;
+                border: 1px solid #d1d1d1;
+                border-bottom: 0;
+                border-radius: 4px 4px 0 0;
+            }
+
+            .title > h1 {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 18px;
+            }
+
+            .panel {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                padding: 8px;
+            }
+
+            .panel > .button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                margin-bottom: 4px;
+                font-size: 18px;
+                background-color: #ffffff;
+                border: 1px solid #d1d1d1;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.1s ease-in-out;
+            }
+
+            .panel > .button:last-child {
+                margin-bottom: 0;
+            }
+
+            .panel > .button:hover {
+                color: #4096ff;
+                border-color: #4096ff;
+            }
+
+            .panel > .button:active {
+                color: #0958d9;
+                border-color: #0958d9;
+            }
+
+            #scene {
+                flex-grow: 1;
+                border: 1px solid #d1d1d1;
+                background-color: #ffffff;
+                border-radius: 0 0 4px 4px;
+                overflow: hidden;
+            }
+        </style>
     </head>
     <body>
+        <section class="container">
+            <div class="title">
+                <h1>Conway Errors Visualization</h1>
+            </div>
+            <div id="scene"></div>
+            <div class="panel">
+                <button class="button button-center">
+                    <svg
+                        viewBox="64 64 896 896"
+                        focusable="false"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M952 474H829.8C812.5 327.6 696.4 211.5 550 194.2V72c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v122.2C327.6 211.5 211.5 327.6 194.2 474H72c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h122.2C211.5 696.4 327.6 812.5 474 829.8V952c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V829.8C696.4 812.5 812.5 696.4 829.8 550H952c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zM512 756c-134.8 0-244-109.2-244-244s109.2-244 244-244 244 109.2 244 244-109.2 244-244 244z"
+                        ></path>
+                        <path
+                            d="M512 392c-32.1 0-62.1 12.4-84.8 35.2-22.7 22.7-35.2 52.7-35.2 84.8s12.5 62.1 35.2 84.8C449.9 619.4 480 632 512 632s62.1-12.5 84.8-35.2C619.4 574.1 632 544 632 512s-12.5-62.1-35.2-84.8A118.57 118.57 0 00512 392z"
+                        ></path>
+                    </svg>
+                </button>
+                <button class="button button-download">
+                    <svg
+                        viewBox="64 64 896 896"
+                        focusable="false"
+                        data-icon="download"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                        ></path>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
         <script type="module" src="./main.ts"></script>
     </body>
 </html>
