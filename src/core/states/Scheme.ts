@@ -1,18 +1,39 @@
 import { Gap, Position, SchemeMeasure } from '../scheme/Dimensions';
 import { SourceTreeNode } from '../scheme/SourceTreeNode';
 
+/**
+ * Parameters for initializing a Scheme instance.
+ * @property {Function} notify - Callback for state changes
+ * @property {Function} rebuild - Callback for tree reconstruction
+ */
 interface SchemeParams {
     notify: (scheme: SchemeNotifiedPayload) => void;
     rebuild: () => void;
 }
 
+/**
+ * Payload structure for scheme state notifications.
+ * @property {SourceTreeNode} tree - Current node hierarchy
+ * @property {SchemeMeasure} measure - Current layout dimensions
+ */
 export interface SchemeNotifiedPayload {
     tree: SourceTreeNode;
     measure: SchemeMeasure;
 }
 
+/**
+ * Manages the hierarchical node structure and layout measurements for the visualization.
+ */
 export class Scheme {
+    /**
+     * The root node of the hierarchical tree structure.
+     * @type {SourceTreeNode}
+     */
     tree: SourceTreeNode;
+    /**
+     * Current dimensions and layout measurements of the scheme.
+     * @type {SchemeMeasure}
+     */
     measure: SchemeMeasure;
 
     /**
@@ -31,13 +52,23 @@ export class Scheme {
 
     constructor(private params: SchemeParams) {}
 
-    public getState() {
+    /**
+     * Gets the current state of the scheme.
+     * @returns {SchemeNotifiedPayload} Current tree and measurement state
+     */
+    public getState(): SchemeNotifiedPayload {
         return {
             tree: this.tree,
             measure: this.measure,
         };
     }
 
+    /**
+     * Updates the scheme state and triggers notifications.
+     * @param {SourceTreeNode} tree - New tree structure
+     * @param {SchemeMeasure} measure - New layout measurements
+     * @returns {void}
+     */
     public setState(tree: SourceTreeNode, measure: SchemeMeasure): void {
         this.tree = tree;
         this.measure = measure;
@@ -45,6 +76,12 @@ export class Scheme {
         this.notify();
     }
 
+    /**
+     * Finds and collapses a node based on mouse coordinates.
+     * @param {number} mouseX - X coordinate in canvas space
+     * @param {number} mouseY - Y coordinate in canvas space
+     * @returns {boolean} True if a node was found and collapsed
+     */
     public findNodeByMouseCoordinates(mouseX: number, mouseY: number): boolean {
         const position = new Position(mouseX, mouseY);
         const foundNode = this.findNodeByPosition(position);
@@ -58,12 +95,23 @@ export class Scheme {
         return true;
     }
 
-    private notify() {
+    /**
+     * Triggers state change notification.
+     * @private
+     * @returns {void}
+     */
+    private notify(): void {
         const currentState = this.getState();
         this.params.notify(currentState);
     }
 
-    private findNodeByPosition(targetPosition: Position) {
+    /**
+     * Finds a node by position using BFS traversal.
+     * @private
+     * @param {Position} targetPosition - The position to search for
+     * @returns {SourceTreeNode|null} The found node or null
+     */
+    private findNodeByPosition(targetPosition: Position): SourceTreeNode | null {
         const queue: SourceTreeNode[] = [this.tree];
 
         while (queue.length > 0) {
@@ -85,6 +133,13 @@ export class Scheme {
         return null;
     }
 
+    /**
+     * Checks if a position is inside a node's bounds.
+     * @private
+     * @param {SourceTreeNode} node - The node to check
+     * @param {Position} position - The position to test
+     * @returns {boolean} True if the position is inside the node
+     */
     private checkIfPositionInsideNode(node: SourceTreeNode, position: Position): boolean {
         return (
             position.x >= node.position.x &&

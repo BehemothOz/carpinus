@@ -1,19 +1,35 @@
 import { SourceTree, type SourceTreeNode } from './scheme';
 import { Scene } from './scene';
 import { State } from './states';
+import { FigureFactory } from './scheme/Factory';
 
 import { type SourceItem } from '../__source';
 
-import { FigureFactory } from './scheme/Factory';
-
+/**
+ * Configuration options for CarpinusScene initialization.
+ * @property {HTMLElement} container - DOM element to host the canvas
+ * @property {SourceItem} dataSource - Hierarchical data structure to visualize
+ */
 interface CarpinusSceneOptions {
     container: HTMLElement;
     dataSource: SourceItem;
 }
 
+/**
+ * The main scene class that orchestrates the visualization of hierarchical data.
+ * Manages the complete rendering pipeline from data to visual representation.
+ * @extends Scene
+ */
 export class CarpinusScene extends Scene {
+    /**
+     * The source tree manager that handles data-to-node conversion.
+     * @type {SourceTree}
+     */
     sourceTree: SourceTree;
 
+    /**
+     * Creates a new CarpinusScene instance.
+     */
     constructor(options: CarpinusSceneOptions) {
         const { container, dataSource } = options;
 
@@ -38,15 +54,29 @@ export class CarpinusScene extends Scene {
         this.sourceTree = sourceTree;
     }
 
-    getState() {
+    /**
+     * Gets the current state manager instance.
+     * @returns {State} The current state manager
+     */
+    public getState(): State {
         return this.state;
     }
 
-    public initialize() {
+    /**
+     * Initializes the scene by creating the initial tree structure.
+     * @returns {void}
+     */
+    public initialize(): void {
         this.sourceTree.create();
     }
 
-    protected drawScene(node: SourceTreeNode) {
+    /**
+     * Recursively draws the scene starting from a given node.
+     * @protected
+     * @param {SourceTreeNode} node - The root node to start drawing from
+     * @returns {void}
+     */
+    protected drawScene(node: SourceTreeNode): void {
         if (node.isCollapsed) {
             return;
         }

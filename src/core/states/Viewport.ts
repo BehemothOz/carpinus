@@ -47,10 +47,10 @@ export class Viewport {
      * Changes the scale of the scene and adjusts the offset to maintain the point under cursor.
      * When zooming, the point under the cursor should remain fixed in screen coordinates.
      * This requires adjusting both scale and offset together.
-     * 
+     *
      * @param {number} scale - The new scale value
      * @param {Offset} pivotOffset - The offset that should be maintained during zoom.
-     * 
+     *
      * This is typically the screen coordinates of the cursor position
      * when zooming, or the center of the viewport when centering.
      */
@@ -68,7 +68,6 @@ export class Viewport {
     /**
      * Changes the offset of the scene.
      * This is typically used for panning operations.
-     * 
      * @param {Offset} offset - The new offset value
      */
     public changeOffset({ x, y }: Offset) {
@@ -83,7 +82,6 @@ export class Viewport {
     /**
      * Changes the size of the canvas.
      * This is called when the container size changes.
-     * 
      * @param {number} width - The new width of the canvas
      * @param {number} height - The new height of the canvas
      */
@@ -97,7 +95,6 @@ export class Viewport {
     /**
      * Notifies about viewport state changes.
      * The actual rendering is handled by the Scene class using requestAnimationFrame.
-     * 
      * @private
      */
     private emitTransformUpdate() {
